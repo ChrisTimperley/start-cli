@@ -12,7 +12,9 @@ setuptools.setup(
         'start_image',
         'start_core',
         'bugzoo',
-        'darjeeling'
+        'darjeeling',
+        'tabulate',
+        'cement'
     ],
     python_requires='>=3.5',
     packages=['start_cli'],
