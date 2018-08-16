@@ -9,9 +9,9 @@ setuptools.setup(
     author_email='christimperley@gmail.com',
     url='https://github.com/ChrisTimperley/start-cli',
     install_requires=[
-        'start_image',
-        'start_core',
-        'start_repair',
+        'start-image',
+        'start-core',
+        'start-repair',
         'tabulate',
         'cement'
     ],
