@@ -62,11 +62,24 @@ class RepairController(ArgparseController):
         fn_scenario = self.app.pargs.file
         scenario = self.__load_scenario(fn_scenario)
 
-        logger.info("performing static analyis of scenario [%s]", scenario.name)
+        logger.info("performing static analyis of scenario")
 
         fn_out = "analysis.json"
 
         logger.info("saved static analysis to disk: %s", fn_out)
+
+    @expose(
+        help='performs fault localization for a given scenario.',
+        arguments=[OPT_FILE, OPT_TIMEOUT, OPT_LIVENESS, OPT_SPEEDUP])
+    def localize(self) -> None:
+        fn_scenario = self.app.pargs.file
+        scenario = self.__load_scenario(fn_scenario)
+
+        logger.info("performing fault localization for scenario")
+
+        fn_out = "coverage.json"
+
+        logger.info("saved fault localization to disk: %s", fn_out)
 
     @expose(
         help='ensures that a scenario produces an expected set of test outcomes',
