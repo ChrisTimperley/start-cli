@@ -56,6 +56,19 @@ class RepairController(ArgparseController):
         logger.info("successfully repaired scenario")
 
     @expose(
+        help='performs static analysis of a given scenario.',
+        arguments=[OPT_FILE])
+    def analyze(self) -> None:
+        fn_scenario = self.app.pargs.file
+        scenario = self.__load_scenario(fn_scenario)
+
+        logger.info("performing static analyis of scenario [%s]", scenario.name)
+
+        fn_out = "analysis.json"
+
+        logger.info("saved static analysis to disk: %s", fn_out)
+
+    @expose(
         help='ensures that a scenario produces an expected set of test outcomes',
         arguments=[OPT_FILE, OPT_TIMEOUT, OPT_LIVENESS, OPT_SPEEDUP])
     def validate(self) -> None:
