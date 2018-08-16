@@ -1,2 +1,17 @@
 # start-cli
+
 Provides a command-line interface to START
+
+## Commands
+
+To sanity check the test suite behaviour of a given scenario:
+
+```
+$ startcli repair validate ~/start/scenarios/AIS-Scenario1/scenario.config
+```
+
+To attempt to find a repair for a given scenario:
+
+```
+$ startcli repair repair ~/start/scenarios/AIS-Scenario1/scenario.config
+```
