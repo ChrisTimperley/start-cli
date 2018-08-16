@@ -3,6 +3,8 @@ import logging
 from cement.core.foundation import CementApp
 from cement.ext.ext_argparse import ArgparseController
 
+from .repair import RepairController
+
 
 BANNER = """
 
@@ -47,7 +49,9 @@ class CLI(CementApp):
     class Meta:
         label = 'start'
         base_controller = BaseController
-        handlers = []
+        handlers = [
+            RepairController
+        ]
 
 
 def main():
