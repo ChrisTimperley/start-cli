@@ -11,6 +11,7 @@ setuptools.setup(
     install_requires=[
         'start_image',
         'start_core',
+        'start_repair',
         'bugzoo',
         'darjeeling',
         'tabulate',
