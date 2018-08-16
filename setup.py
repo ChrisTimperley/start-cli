@@ -12,8 +12,6 @@ setuptools.setup(
         'start_image',
         'start_core',
         'start_repair',
-        'bugzoo',
-        'darjeeling',
         'tabulate',
         'cement'
     ],
