@@ -4,6 +4,15 @@ Provides a command-line interface to START
 
 ## Commands
 
+To obtain a list of commands and to learn more about a given command or
+group of commands:
+
+```
+$ startcli --help
+$ startcli repair --help
+$ startcli repair validate --help
+```
+
 To sanity check the test suite behaviour of a given scenario:
 
 ```
