@@ -15,3 +15,10 @@ To attempt to find a repair for a given scenario:
 ```
 $ startcli repair repair ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
+
+To perform static analysis on the source code for a given scenario:
+
+```
+$ startcli repair analyze ~/start/scenarios/AIS-Scenario1/scenario.config
+$ cat analysis.json
+```
