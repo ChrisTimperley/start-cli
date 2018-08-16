@@ -22,3 +22,11 @@ To perform static analysis on the source code for a given scenario:
 $ startcli repair analyze ~/start/scenarios/AIS-Scenario1/scenario.config
 $ cat analysis.json
 ```
+
+To localise the fault for a given scenario and to compute its coverage
+information:
+
+```
+$ startcli repair localize ~/start/scenarios/AIS-Scenario1/scenario.config
+$ cat coverage.json
+```
