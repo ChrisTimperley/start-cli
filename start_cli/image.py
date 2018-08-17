@@ -25,7 +25,7 @@ class ImageController(ArgparseController):
         arguments=[OPT_FILE])
     def build(self) -> None:
         fn_scenario = self.app.pargs.file
-        logger.info("loading scenario from file [%s]", args.filename)
+        logger.info("loading scenario from file [%s]", fn_scenario)
         scenario = Scenario.from_file(fn_scenario)
         logger.info("loaded scenario")
         image = image_name(scenario)
