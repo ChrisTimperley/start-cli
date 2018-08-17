@@ -1,10 +1,10 @@
 __all__ = ['TestController']
 
+import sys
 import logging
 
+from start_core.test import execute as execute_test
 from start_core.scenario import Scenario
-from start_repair.snapshot import Snapshot
-from start_repair.validate import validate
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from .opts import *
@@ -15,22 +15,13 @@ logger.setLevel(logging.DEBUG)
 
 class TestController(ArgparseController):
     class Meta:
-        label = 'repair'
-        description = 'interact with the repair component of START'
+        label = 'test'
+        description = 'execute missions using a given ArduPilot binary'
         stacked_on = 'base'
-        stacked_type = 'nested'
-
-    def __load_scenario(self, filename: str) -> Scenario:
-        logger.info("loading scenario from file [%s]", filename)
-        scenario = Scenario.from_file(filename)
-        logger.info("loaded scenario [%s] from file", scenario.name)
-        return scenario
-
-    def default(self) -> None:
-        self.app.args.print_help()
+        stacked_type = 'embedded'
 
     @expose(
-        help='attempts to repair the source code for a given scenario',
+        help='executes a given mission on an ArduPilot binary',
         arguments=[
             OPT_FILE,
             OPT_SPEEDUP,
@@ -41,10 +32,22 @@ class TestController(ArgparseController):
         ])
     def execute(self) -> None:
         fn_scenario = self.app.pargs.file
-
-        scenario = self.__load_scenario(fn_scenario)
-        logger.info("repairing scenario")
-
-        logger.info("successfully repaired scenario")
-
-
+        timeout_mission = self.app.pargs.timeout_mission
+        timeout_liveness = self.app.pargs.timeout_liveness
+        timeout_connection = self.app.pargs.timeout_connection
+        speedup = self.app.pargs.speedup
+        scenario = Scenario.from_file(fn_scenario)
+        (passed, reason) = execute_test(sitl=scenario.sitl,
+                                         mission=scenario.mission,
+                                         attack=scenario.attack,
+                                         speedup=speedup,
+                                         timeout_mission=timeout_mission,
+                                         timeout_liveness=timeout_liveness,
+                                         timeout_connection=timeout_connection,
+                                         check_wps=True)
+        if passed:
+            logger.info("mission was successfully completed.")
+            sys.exit(0)
+        else:
+            logger.info("mission failed: %s", reason)
+            sys.exit(1)

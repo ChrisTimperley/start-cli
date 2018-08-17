@@ -4,6 +4,7 @@ from cement.core.foundation import CementApp
 from cement.ext.ext_argparse import ArgparseController
 
 from .repair import RepairController
+from .test import TestController
 
 
 BANNER = """
