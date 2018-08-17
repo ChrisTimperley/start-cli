@@ -3,7 +3,7 @@ __all__ = ['ImageController']
 import sys
 import logging
 
-from start_image.name import image_name
+from start_image.name import name as image_name
 from start_image.build import build_scenario_image
 from start_core.scenario import Scenario
 from cement.ext.ext_argparse import ArgparseController, expose
