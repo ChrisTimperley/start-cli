@@ -5,6 +5,7 @@ from cement.ext.ext_argparse import ArgparseController
 
 from .repair import RepairController
 from .test import TestController
+from .image import ImageController
 
 
 BANNER = """
@@ -52,7 +53,8 @@ class CLI(CementApp):
         base_controller = BaseController
         handlers = [
             RepairController,
-            TestController
+            TestController,
+            ImageController
         ]
 
 
