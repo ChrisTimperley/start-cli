@@ -51,7 +51,8 @@ class CLI(CementApp):
         label = 'start'
         base_controller = BaseController
         handlers = [
-            RepairController
+            RepairController,
+            TestController
         ]
 
 
