@@ -32,8 +32,8 @@ class TestController(ArgparseController):
         ])
     def execute(self) -> None:
         fn_scenario = self.app.pargs.file
-        timeout_mission = self.app.pargs.timeout_mission
-        timeout_liveness = self.app.pargs.timeout_liveness
+        timeout_mission = self.app.pargs.time_limit
+        timeout_liveness = self.app.pargs.liveness_timeout
         timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         scenario = Scenario.from_file(fn_scenario)
