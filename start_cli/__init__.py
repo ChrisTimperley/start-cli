@@ -3,9 +3,14 @@ import logging
 from cement.core.foundation import CementApp
 from cement.ext.ext_argparse import ArgparseController
 
-from .repair import RepairController
+try:
+    from .repair import RepairController
+except Exception:
+    pass
+
 from .test import TestController
 from .image import ImageController
+
 
 
 BANNER = """
@@ -43,7 +48,8 @@ class BaseController(ArgparseController):
             (['--version'], dict(action='version', version=BANNER))
         ]
 
-    def default(self) -> None:
+    def default(self):
+        # type: () -> None
         self.app.args.print_help()
 
 
@@ -52,10 +58,13 @@ class CLI(CementApp):
         label = 'start'
         base_controller = BaseController
         handlers = [
-            RepairController,
             TestController,
             ImageController
         ]
+        try:
+            handlers.append(RepairController)
+        except Exception:
+            pass
 
 
 def main():

@@ -11,11 +11,9 @@ setuptools.setup(
     install_requires=[
         'start-image',
         'start-core',
-        'start-repair',
         'tabulate',
         'cement'
     ],
-    python_requires='>=3.5',
     packages=['start_cli'],
     entry_points = {
         'console_scripts': [ 'start-cli = start_cli:main' ]
