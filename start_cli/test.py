@@ -30,7 +30,8 @@ class TestController(ArgparseController):
             OPT_TIMEOUT_CONNECTION,
             OPT_CHECK_WAYPOINTS
         ])
-    def execute(self) -> None:
+    def execute(self):
+        # type: () -> None
         fn_scenario = self.app.pargs.file
         timeout_mission = self.app.pargs.time_limit
         timeout_liveness = self.app.pargs.liveness_timeout

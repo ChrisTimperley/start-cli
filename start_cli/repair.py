@@ -20,19 +20,22 @@ class RepairController(ArgparseController):
         stacked_on = 'base'
         stacked_type = 'nested'
 
-    def __load_scenario(self, filename: str) -> Scenario:
+    def __load_scenario(self, filename):
+        # type: (str) -> Scenario
         logger.info("loading scenario from file [%s]", filename)
         scenario = Scenario.from_file(filename)
         logger.info("loaded scenario [%s] from file", scenario.name)
         return scenario
 
-    def default(self) -> None:
+    def default(self):
+        # type: () -> None
         self.app.args.print_help()
 
     @expose(
         help='attempts to repair the source code for a given scenario',
         arguments=[OPT_FILE])
-    def repair(self) -> None:
+    def repair(self):
+        # type: () -> None
         fn_scenario = self.app.pargs.file
 
         scenario = self.__load_scenario(fn_scenario)
@@ -43,7 +46,8 @@ class RepairController(ArgparseController):
     @expose(
         help='performs static analysis of a given scenario.',
         arguments=[OPT_FILE])
-    def analyze(self) -> None:
+    def analyze(self):
+        # type: () -> None
         fn_scenario = self.app.pargs.file
         scenario = self.__load_scenario(fn_scenario)
 
@@ -56,7 +60,8 @@ class RepairController(ArgparseController):
     @expose(
         help='performs fault localization for a given scenario.',
         arguments=[OPT_FILE, OPT_TIMEOUT, OPT_LIVENESS, OPT_SPEEDUP])
-    def localize(self) -> None:
+    def localize(self):
+        # type: () -> None
         fn_scenario = self.app.pargs.file
         scenario = self.__load_scenario(fn_scenario)
 
@@ -69,7 +74,8 @@ class RepairController(ArgparseController):
     @expose(
         help='ensures that a scenario produces an expected set of test outcomes',
         arguments=[OPT_FILE, OPT_TIMEOUT, OPT_LIVENESS, OPT_SPEEDUP])
-    def validate(self) -> None:
+    def validate(self):
+        # type: () -> None
         fn_scenario = self.app.pargs.file
         timeout_mission = self.app.pargs.timeout
         timeout_liveness = self.app.pargs.timeout_liveness

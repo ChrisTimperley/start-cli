@@ -24,7 +24,8 @@ class ImageController(ArgparseController):
     @expose(
         help='builds the Docker image for a given scenario',
         arguments=[OPT_FILE])
-    def build(self) -> None:
+    def build(self):
+        # type: () -> None
         fn_scenario = self.app.pargs.file
         logger.info("loading scenario from file [%s]", fn_scenario)
         scenario = Scenario.from_file(fn_scenario)
