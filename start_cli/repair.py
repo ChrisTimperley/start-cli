@@ -49,7 +49,7 @@ class RepairController(ArgparseController):
                                   timeout_liveness=timeout_liveness,
                                   timeout_connection=timeout_connection,
                                   speedup=speedup,
-                                  check_waypoints=True,  # FIXME
+                                  check_waypoints=check_waypoints,
                                   use_oracle_workaround=use_workaround)
         logger.debug("built snapshot: %s", snapshot)
         return snapshot

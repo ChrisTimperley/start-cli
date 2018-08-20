@@ -37,6 +37,7 @@ class TestController(ArgparseController):
         timeout_mission = self.app.pargs.timeout_mission
         timeout_liveness = self.app.pargs.timeout_liveness
         timeout_connection = self.app.pargs.timeout_connection
+        check_waypoints = self.app.pargs.check_waypoints
         speedup = self.app.pargs.speedup
         scenario = Scenario.from_file(fn_scenario)
         attack = scenario.attack if self.app.pargs.attack else None
@@ -47,7 +48,7 @@ class TestController(ArgparseController):
                                         timeout_mission=timeout_mission,
                                         timeout_liveness=timeout_liveness,
                                         timeout_connection=timeout_connection,
-                                        check_wps=True)
+                                        check_wps=check_waypoints)
         if passed:
             logger.info("mission was successfully completed.")
             sys.exit(0)
