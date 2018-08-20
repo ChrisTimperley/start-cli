@@ -83,6 +83,7 @@ class RepairController(ArgparseController):
         help='ensures that a scenario produces an expected set of test outcomes',
         arguments=[OPT_FILE,
                    OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_WORKAROUND])
