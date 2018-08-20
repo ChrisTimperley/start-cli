@@ -3,7 +3,7 @@ OPT_TIMEOUT = \
     (['--time-limit'],
      {'help': 'the number of seconds that may pass without success until a mission is considered a failure.',
      'type': int,
-     'dest': 'timeout',
+     'dest': 'timeout_mission',
      'default': 300})
 OPT_TIMEOUT_CONNECTION = \
     (['--timeout-connection'],

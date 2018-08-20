@@ -34,20 +34,20 @@ class TestController(ArgparseController):
     def execute(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
-        timeout_mission = self.app.pargs.time_limit
-        timeout_liveness = self.app.pargs.liveness_timeout
+        timeout_mission = self.app.pargs.timeout_mission
+        timeout_liveness = self.app.pargs.timeout_liveness
         timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         scenario = Scenario.from_file(fn_scenario)
         attack = scenario.attack if self.app.pargs.attack else None
         (passed, reason) = execute_test(sitl=scenario.sitl,
-                                         mission=scenario.mission,
-                                         attack=attack,
-                                         speedup=speedup,
-                                         timeout_mission=timeout_mission,
-                                         timeout_liveness=timeout_liveness,
-                                         timeout_connection=timeout_connection,
-                                         check_wps=True)
+                                        mission=scenario.mission,
+                                        attack=attack,
+                                        speedup=speedup,
+                                        timeout_mission=timeout_mission,
+                                        timeout_liveness=timeout_liveness,
+                                        timeout_connection=timeout_connection,
+                                        check_wps=True)
         if passed:
             logger.info("mission was successfully completed.")
             sys.exit(0)

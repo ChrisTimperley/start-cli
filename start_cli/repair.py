@@ -89,8 +89,9 @@ class RepairController(ArgparseController):
     def validate(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
-        timeout_mission = self.app.pargs.timeout
+        timeout_mission = self.app.pargs.timeout_mission
         timeout_liveness = self.app.pargs.timeout_liveness
+        timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         use_workaround = self.app.pargs.use_workaround
 
@@ -99,6 +100,7 @@ class RepairController(ArgparseController):
         snapshot = Snapshot.build(scenario=scenario,
                                   timeout_mission=timeout_mission,
                                   timeout_liveness=timeout_liveness,
+                                  timeout_connection=timeout_connection,
                                   speedup=speedup,
                                   check_waypoints=True,  # FIXME
                                   use_oracle_workaround=use_workaround)
