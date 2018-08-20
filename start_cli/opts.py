@@ -16,10 +16,10 @@ OPT_WORKAROUND = \
       'dest': 'use_workaround',
       'action': 'store_false'})
 OPT_CHECK_WAYPOINTS = \
-    (['--check-wps'],
-     {'help': 'enable checking of number of visited waypoints.',
+    (['--no-check-wps'],
+     {'help': 'disables checking of number of visited waypoints.',
       'dest': 'check_waypoints',
-      'action': 'store_true'})
+      'action': 'store_false'})
 OPT_SITL_PREFIX = None
 OPT_ATTACK = \
     (['--attack'],
