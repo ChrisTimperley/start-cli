@@ -19,7 +19,7 @@ class RepairController(ArgparseController):
         label = 'repair'
         description = 'interact with the repair component of START'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
 
     def __load_scenario(self, filename):
         # type: (str) -> Scenario
