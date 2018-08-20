@@ -102,5 +102,5 @@ class RepairController(ArgparseController):
                                   speedup=speedup,
                                   check_waypoints=True,  # FIXME
                                   use_oracle_workaround=use_workaround)
-        validate(snapshot)
+        validate(snapshot, verbose=self.app.pargs.verbose)
         logger.info("validated scenario")
