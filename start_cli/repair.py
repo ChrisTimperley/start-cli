@@ -117,13 +117,13 @@ class RepairController(ArgparseController):
         timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         use_workaround = self.app.pargs.use_workaround
-        snapshot = self.__load_snapshot(fn_scenario,
-                                        timeout_mission,
-                                        timeout_liveness,
-                                        timeout_connection,
-                                        speedup,
-                                        check_waypoints,
-                                        use_oracle_workaround)
+        snapshot = self.__build_snapshot(fn_scenario,
+                                         timeout_mission,
+                                         timeout_liveness,
+                                         timeout_connection,
+                                         speedup,
+                                         check_waypoints,
+                                         use_oracle_workaround)
         logger.info("validating scenario")
         validate(snapshot, verbose=self.app.pargs.verbose)
         logger.info("validated scenario")
