@@ -31,6 +31,28 @@ class RepairController(ArgparseController):
         # type: () -> None
         self.app.args.print_help()
 
+    def __build_snapshot(self,
+                         fn_scenario,           # type: str
+                         timeout_mission,       # type: int
+                         timeout_liveness,      # type: int
+                         timeout_connection,    # type: int
+                         speedup,               # type: int
+                         check_waypoints,       # type: bool
+                         use_oracle_workaround  # type: bool
+                         ):                     # type: (...) -> None
+        # type: (str) -> Snapshot
+        scenario = __load_scenario(fn_scenario)
+        logger.debug("building snapshot")
+        snapshot = Snapshot.build(scenario=scenario,
+                                  timeout_mission=timeout_mission,
+                                  timeout_liveness=timeout_liveness,
+                                  timeout_connection=timeout_connection,
+                                  speedup=speedup,
+                                  check_waypoints=True,  # FIXME
+                                  use_oracle_workaround=use_workaround)
+        logger.debug("built snapshot: %s", snapshot)
+        return snapshot
+
     @expose(
         help='attempts to repair the source code for a given scenario',
         arguments=[OPT_FILE,
@@ -95,15 +117,13 @@ class RepairController(ArgparseController):
         timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         use_workaround = self.app.pargs.use_workaround
-
-        scenario = self.__load_scenario(fn_scenario)
+        snapshot = self.__load_snapshot(fn_scenario,
+                                        timeout_mission,
+                                        timeout_liveness,
+                                        timeout_connection,
+                                        speedup,
+                                        check_waypoints,
+                                        use_oracle_workaround)
         logger.info("validating scenario")
-        snapshot = Snapshot.build(scenario=scenario,
-                                  timeout_mission=timeout_mission,
-                                  timeout_liveness=timeout_liveness,
-                                  timeout_connection=timeout_connection,
-                                  speedup=speedup,
-                                  check_waypoints=True,  # FIXME
-                                  use_oracle_workaround=use_workaround)
         validate(snapshot, verbose=self.app.pargs.verbose)
         logger.info("validated scenario")
