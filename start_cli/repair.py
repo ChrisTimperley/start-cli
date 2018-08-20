@@ -38,7 +38,7 @@ class RepairController(ArgparseController):
                          timeout_connection,    # type: int
                          speedup,               # type: int
                          check_waypoints,       # type: bool
-                         use_oracle_workaround  # type: bool
+                         use_workaround         # type: bool
                          ):                     # type: (...) -> None
         # type: (str) -> Snapshot
         scenario = __load_scenario(fn_scenario)
@@ -127,7 +127,7 @@ class RepairController(ArgparseController):
                                          timeout_connection,
                                          speedup,
                                          check_waypoints,
-                                         use_oracle_workaround)
+                                         use_workaround)
         logger.info("validating scenario")
         validate(snapshot, verbose=self.app.pargs.verbose)
         logger.info("validated scenario")
