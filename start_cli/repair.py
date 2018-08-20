@@ -5,6 +5,7 @@ import logging
 from start_core.scenario import Scenario
 from start_repair.snapshot import Snapshot
 from start_repair.validate import validate
+from start_repair.localize import coverage
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from .opts import *
@@ -95,12 +96,24 @@ class RepairController(ArgparseController):
     def localize(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
-        scenario = self.__load_scenario(fn_scenario)
+        timeout_mission = self.app.pargs.timeout_mission
+        timeout_liveness = self.app.pargs.timeout_liveness
+        timeout_connection = self.app.pargs.timeout_connection
+        speedup = self.app.pargs.speedup
+        use_workaround = self.app.pargs.use_workaround
+        check_waypoints = self.app.pargs.check_waypoints
+        snapshot = self.__build_snapshot(fn_scenario,
+                                         timeout_mission,
+                                         timeout_liveness,
+                                         timeout_connection,
+                                         speedup,
+                                         check_waypoints,
+                                         use_workaround)
 
         logger.info("performing fault localization for scenario")
-
         fn_out = "coverage.json"
-
+        cov = coverage(snapshot, fn_out)
+        logger.info("Coverage:\n%s", cov)
         logger.info("saved fault localization to disk: %s", fn_out)
 
     @expose(
