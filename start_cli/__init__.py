@@ -45,7 +45,10 @@ class BaseController(ArgparseController):
         label = 'base'
         description = 'A command-line interface to START.'
         arguments = [
-            (['--version'], dict(action='version', version=BANNER))
+            (['--version'], {'action': 'version',
+                             'version': BANNER}),
+            (['--verbose'], {'type': str,
+                             'help': 'enables detailed reporting.'})
         ]
 
     def default(self):
