@@ -9,7 +9,7 @@ OPT_TIMEOUT_CONNECTION = \
     (['--timeout-connection'],
      {'help': 'the number of seconds to wait when connecting to the SITL before aborting.',
      'type': int,
-     'default': 5})
+     'default': 10})
 OPT_WORKAROUND = \
     (['--no-workaround'],
      {'help': 'disables a workaround that causes the oracle to ignore all commands beyond a known non-terminating command.',
