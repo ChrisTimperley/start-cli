@@ -14,6 +14,10 @@ OPT_CHECK_WAYPOINTS = \
      {'help': 'enable checking of number of visited waypoints.',
       'action': 'store_true'})
 OPT_SITL_PREFIX = None
+OPT_ATTACK = \
+    (['--attack'],
+     {'help': 'enables the attack during the mission execution.',
+      'action': 'store_true'})
 OPT_SPEEDUP = \
     (['--speedup'],
      {'help': 'the speed-up factor that should be applied to the simulation clock.',

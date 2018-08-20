@@ -28,6 +28,7 @@ class TestController(ArgparseController):
             OPT_LIVENESS,
             OPT_TIMEOUT,
             OPT_TIMEOUT_CONNECTION,
+            OPT_ATTACK,
             OPT_CHECK_WAYPOINTS
         ])
     def execute(self):
@@ -38,9 +39,10 @@ class TestController(ArgparseController):
         timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         scenario = Scenario.from_file(fn_scenario)
+        attack = scenario.attack if self.app.pargs.attack else None
         (passed, reason) = execute_test(sitl=scenario.sitl,
                                          mission=scenario.mission,
-                                         attack=scenario.attack,
+                                         attack=attack,
                                          speedup=speedup,
                                          timeout_mission=timeout_mission,
                                          timeout_liveness=timeout_liveness,
