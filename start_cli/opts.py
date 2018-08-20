@@ -18,6 +18,7 @@ OPT_WORKAROUND = \
 OPT_CHECK_WAYPOINTS = \
     (['--check-wps'],
      {'help': 'enable checking of number of visited waypoints.',
+      'dest': 'check_waypoints',
       'action': 'store_true'})
 OPT_SITL_PREFIX = None
 OPT_ATTACK = \

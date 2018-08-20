@@ -87,8 +87,10 @@ class RepairController(ArgparseController):
         help='performs fault localization for a given scenario.',
         arguments=[OPT_FILE,
                    OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND])
     def localize(self):
         # type: () -> None
@@ -108,6 +110,7 @@ class RepairController(ArgparseController):
                    OPT_TIMEOUT_CONNECTION,
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND])
     def validate(self):
         # type: () -> None
@@ -117,6 +120,7 @@ class RepairController(ArgparseController):
         timeout_connection = self.app.pargs.timeout_connection
         speedup = self.app.pargs.speedup
         use_workaround = self.app.pargs.use_workaround
+        check_waypoints = self.app.pargs.check_waypoints
         snapshot = self.__build_snapshot(fn_scenario,
                                          timeout_mission,
                                          timeout_liveness,
