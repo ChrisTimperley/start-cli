@@ -3,6 +3,7 @@ OPT_TIMEOUT = \
     (['--time-limit'],
      {'help': 'the number of seconds that may pass without success until a mission is considered a failure.',
      'type': int,
+     'dest': 'timeout',
      'default': 300})
 OPT_TIMEOUT_CONNECTION = \
     (['--timeout-connection'],
@@ -27,4 +28,5 @@ OPT_LIVENESS = \
     (['--liveness-timeout'],
      {'help': 'the number of seconds that may pass without communication with the rover until the mission is aborted.',
       'type': int,
+      'dest': 'timeout_liveness',
       'default': 1})
