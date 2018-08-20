@@ -47,7 +47,7 @@ class BaseController(ArgparseController):
         arguments = [
             (['--version'], {'action': 'version',
                              'version': BANNER}),
-            (['--verbose'], {'type': str,
+            (['--verbose'], {'action': 'store_true',
                              'help': 'enables detailed reporting.'})
         ]
 
