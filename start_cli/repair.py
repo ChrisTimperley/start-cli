@@ -41,7 +41,7 @@ class RepairController(ArgparseController):
                          use_workaround         # type: bool
                          ):                     # type: (...) -> None
         # type: (str) -> Snapshot
-        scenario = __load_scenario(fn_scenario)
+        scenario = self.__load_scenario(fn_scenario)
         logger.debug("building snapshot")
         snapshot = Snapshot.build(scenario=scenario,
                                   timeout_mission=timeout_mission,
