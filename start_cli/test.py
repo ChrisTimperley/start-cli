@@ -27,7 +27,6 @@ class TestController(ArgparseController):
             OPT_SPEEDUP,
             OPT_LIVENESS,
             OPT_TIMEOUT,
-            OPT_LIVENESS,
             OPT_TIMEOUT_CONNECTION,
             OPT_ATTACK,
             OPT_CHECK_WAYPOINTS
