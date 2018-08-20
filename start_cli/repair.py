@@ -33,7 +33,11 @@ class RepairController(ArgparseController):
 
     @expose(
         help='attempts to repair the source code for a given scenario',
-        arguments=[OPT_FILE])
+        arguments=[OPT_FILE,
+                   OPT_TIMEOUT,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_WORKAROUND])
     def repair(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
@@ -59,7 +63,11 @@ class RepairController(ArgparseController):
 
     @expose(
         help='performs fault localization for a given scenario.',
-        arguments=[OPT_FILE, OPT_TIMEOUT, OPT_LIVENESS, OPT_SPEEDUP])
+        arguments=[OPT_FILE,
+                   OPT_TIMEOUT,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_WORKAROUND])
     def localize(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
@@ -73,15 +81,19 @@ class RepairController(ArgparseController):
 
     @expose(
         help='ensures that a scenario produces an expected set of test outcomes',
-        arguments=[OPT_FILE, OPT_TIMEOUT, OPT_LIVENESS, OPT_SPEEDUP])
+        arguments=[OPT_FILE,
+                   OPT_TIMEOUT,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_WORKAROUND])
     def validate(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
         timeout_mission = self.app.pargs.timeout
         timeout_liveness = self.app.pargs.timeout_liveness
         speedup = self.app.pargs.speedup
+        use_workaround = self.app.pargs.use_workaround
 
-        # FIXME build snapshot
         scenario = self.__load_scenario(fn_scenario)
         logger.info("validating scenario")
         snapshot = Snapshot.build(scenario=scenario,
@@ -89,6 +101,6 @@ class RepairController(ArgparseController):
                                   timeout_liveness=timeout_liveness,
                                   speedup=speedup,
                                   check_waypoints=True,  # FIXME
-                                  use_oracle_workaround=False)  # FIXME
+                                  use_oracle_workaround=use_workaround)
         validate(snapshot)
         logger.info("validated scenario")

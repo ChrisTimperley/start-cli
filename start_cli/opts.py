@@ -10,6 +10,11 @@ OPT_TIMEOUT_CONNECTION = \
      {'help': 'the number of seconds to wait when connecting to the SITL before aborting.',
      'type': int,
      'default': 5})
+OPT_WORKAROUND = \
+    (['--no-workaround'],
+     {'help': 'disables a workaround that causes the oracle to ignore all commands beyond a known non-terminating command.',
+      'dest': 'use_workaround',
+      'action': 'store_false'})
 OPT_CHECK_WAYPOINTS = \
     (['--check-wps'],
      {'help': 'enable checking of number of visited waypoints.',
