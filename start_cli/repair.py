@@ -2,10 +2,11 @@ __all__ = ['RepairController']
 
 import logging
 
+from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
 from start_repair.snapshot import Snapshot
 from start_repair.validate import validate
-from start_repair.localize import coverage
+from start_repair.localize import coverage, localize
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from .opts import *
@@ -85,7 +86,20 @@ class RepairController(ArgparseController):
         logger.info("saved static analysis to disk: %s", fn_out)
 
     @expose(
-        help='performs fault localization for a given scenario.',
+        help='computes fault localization from a line coverage report.',
+        arguments=[OPT_COVERAGE_FILE]
+    )
+    def localize(self):
+        # type: () -> None
+        logger.info("computing fault localization")
+        fn_coverage = self.app.pargs.file
+        logger.info("using line coverage report: %s", fn_coverage)
+        coverage = TestSuiteCoverage.from_file(fn_coverage)
+        localization = localize(coverage)
+        logger.info("fault localization:\n%s", localization)
+
+    @expose(
+        help='computes line coverage for a given scenario.',
         arguments=[OPT_FILE,
                    OPT_TIMEOUT,
                    OPT_TIMEOUT_CONNECTION,
@@ -93,7 +107,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND])
-    def localize(self):
+    def coverage(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
         timeout_mission = self.app.pargs.timeout_mission
