@@ -12,7 +12,7 @@ setuptools.setup(
         'start-image',
         'start-core',
         'tabulate',
-        'cement'
+        'cement==2.10.12'
     ],
     packages=['start_cli'],
     entry_points = {
