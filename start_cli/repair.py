@@ -91,12 +91,12 @@ class RepairController(ArgparseController):
     )
     def localize(self):
         # type: () -> None
-        logger.info("computing fault localization")
         fn_coverage = self.app.pargs.file
+        logger.info("computing fault localization")
         logger.info("using line coverage report: %s", fn_coverage)
         coverage = TestSuiteCoverage.from_file(fn_coverage)
         localization = localize(coverage)
-        logger.info("fault localization:\n%s", localization)
+        print(localization)
 
     @expose(
         help='computes line coverage for a given scenario.',
