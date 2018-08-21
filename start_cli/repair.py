@@ -7,6 +7,7 @@ from start_core.scenario import Scenario
 from start_repair.snapshot import Snapshot
 from start_repair.validate import validate
 from start_repair.localize import coverage, localize
+from start_repair.analyze import analyze
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from .opts import *
@@ -77,11 +78,22 @@ class RepairController(ArgparseController):
     def analyze(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
-        scenario = self.__load_scenario(fn_scenario)
 
         logger.info("performing static analyis of scenario")
-
         fn_out = "analysis.json"
+
+        # NOTE since we never interact with the test suite, we can use
+        #   placeholder values to build the snapshot.
+        snapshot = self.__build_snapshot(fn_scenario,
+                                         timeout_mission=1,
+                                         timeout_liveness=1,
+                                         timeout_connection=1,
+                                         speedup=1,
+                                         check_waypoints=True,
+                                         use_workaround=True)
+
+        analysis = analyze(snapshot)
+        analysis.dump()
 
         logger.info("saved static analysis to disk: %s", fn_out)
 
