@@ -1,4 +1,6 @@
 OPT_FILE = (['file'], {'help': "path to the scenario config file"})
+OPT_COVERAGE_FILE = \
+    (['file'], {'help': 'path to a JSON-encoded coverage report.'})
 OPT_TIMEOUT = \
     (['--time-limit'],
      {'help': 'the number of seconds that may pass without success until a mission is considered a failure.',
