@@ -56,6 +56,17 @@ class RepairController(ArgparseController):
         logger.debug("built snapshot: %s", snapshot)
         return snapshot
 
+    def __placeholder_snapshot(self, fn_scenario):
+        # type: (str) -> Snapshot
+        return self.__build_snapshot(fn_scenario,
+                                     timeout_mission=1,
+                                     timeout_liveness=1,
+                                     timeout_connection=1,
+                                     speedup=1,
+                                     check_waypoints=True,
+                                     use_workaround=True)
+
+
     @expose(
         help='attempts to repair the source code for a given scenario',
         arguments=[OPT_FILE,
@@ -71,6 +82,20 @@ class RepairController(ArgparseController):
         logger.info("repairing scenario")
 
         logger.info("successfully repaired scenario")
+
+    @expose(
+        help='precomputes the set of transformations for a given scenario.',
+        arguments=[OPT_FILE])
+    def transformations(self):
+        # type: () -> None
+        fn_scenario = self.app.pargs.file
+        fn_out = "transformations.json"
+
+        logger.info("precomputing transformations for scenario")
+
+        snapshot = self.__placeholder_snapshot(fn_scenario)
+
+        logger.info("saved precomputed transformations to disk: %s", fn_out)
 
     @expose(
         help='performs static analysis of a given scenario.',
