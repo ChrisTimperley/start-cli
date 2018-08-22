@@ -1,13 +1,17 @@
 __all__ = ['RepairController']
 
 import logging
+import json
 
+from kaskara.analysis import Analysis
+from darjeeling.snippet import SnippetDatabase
 from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
 from start_repair.snapshot import Snapshot
 from start_repair.validate import validate
 from start_repair.localize import coverage, localize
 from start_repair.analyze import analyze
+from start_repair.repair import transformations as find_transformations
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from .opts import *
@@ -85,16 +89,71 @@ class RepairController(ArgparseController):
 
     @expose(
         help='precomputes the set of transformations for a given scenario.',
-        arguments=[OPT_FILE])
+        arguments=[OPT_FILE,
+                   OPT_SNIPPETS,
+                   OPT_COVERAGE,
+                   OPT_ANALYSIS])
     def transformations(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
+        fn_snippets = self.app.pargs.snippets
+        fn_coverage = self.app.pargs.coverage
+        fn_analysis = self.app.pargs.analysis
+
         fn_out = "transformations.json"
 
-        logger.info("precomputing transformations for scenario")
-
+        # FIXME build the snapshot
         snapshot = self.__placeholder_snapshot(fn_scenario)
 
+        # obtain coverage report
+        if not fn_coverage:
+            logger.info("no line coverage report provided")
+            logger.info("generating line coverage report")
+            # FIXME
+            raise NotImplementedError
+        else:
+            logger.info("loading line coverage report: %s", fn_coverage)
+            coverage = TestSuiteCoverage.from_file(fn_coverage)
+            logger.info("loaded line coverage report")
+
+        # obtain snippet database
+        if not fn_snippets:
+            logger.info("no snippet database provided")
+            logger.info("generating snippet database")
+
+            # FIXME generate snippet database
+            raise NotImplementedError
+        else:
+            logger.info("loading provided snippet database: %s", fn_snippets)
+            snippets = SnippetDatabase.from_file(fn_snippets)
+            logger.info("loaded snippet database: %d snippets", len(snippets))
+
+        # obtain analysis
+        if not fn_analysis:
+            logger.info("no static analysis provided")
+            logger.info("performing static analysis")
+
+            # FIXME
+            raise NotImplementedError
+        else:
+            logger.info("loading provided static analysis: %s", fn_analysis)
+            analysis = Analysis.from_file(fn_analysis, snapshot)
+            logger.info("loaded static analysis")
+
+        logger.info("precomputing transformations for scenario")
+        transformations = find_transformations(snapshot,
+                                               coverage,
+                                               snippets,
+                                               analysis)
+        logger.info("finished precomputing transformations")
+
+        logger.info("writing precomputed transformations to disk: %s", fn_out)
+        try:
+            jsn = [t.to_dict() for t in transformations]
+            with open(fn_out, 'w') as f:
+                json.dump(jsn, f)
+        except Exception:
+            logger.exception("failed to save precomputed transformations to disk")
         logger.info("saved precomputed transformations to disk: %s", fn_out)
 
     @expose(
