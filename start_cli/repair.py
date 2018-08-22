@@ -93,8 +93,7 @@ class RepairController(ArgparseController):
                                          use_workaround=True)
 
         analysis = analyze(snapshot)
-        analysis.dump()
-
+        analysis.to_file(fn_out, snapshot)
         logger.info("saved static analysis to disk: %s", fn_out)
 
     @expose(
