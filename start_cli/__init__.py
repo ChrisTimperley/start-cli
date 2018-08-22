@@ -1,12 +1,15 @@
 import logging
+import warnings
 
 from cement.core.foundation import CementApp
 from cement.ext.ext_argparse import ArgparseController
 
 try:
     from .repair import RepairController
-except Exception:
-    pass
+except Exception as e:
+    msg = "unable to load repair module (only supported by Python >= 3.5): {}"
+    msg = msg.format(e)
+    warnings.warn(msg) #, ImportWarning)
 
 from .test import TestController
 from .image import ImageController
