@@ -5,6 +5,10 @@ OPT_SNIPPETS = \
     (['--snippets'],
      {'help': 'path to a JSON-encoded snippet database.',
       'type': str})
+OPT_COVERAGE = \
+    (['--coverage'],
+     {'help': 'path to a JSON-encoded line coverage report.',
+      'type': str})
 OPT_TIMEOUT = \
     (['--time-limit'],
      {'help': 'the number of seconds that may pass without success until a mission is considered a failure.',
