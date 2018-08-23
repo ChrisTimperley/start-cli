@@ -87,6 +87,21 @@ class RepairController(ArgparseController):
 
         logger.info("successfully repaired scenario")
 
+    def obtain_coverage(self,
+                        snapshot: Snapshot,
+                        fn: str
+                        ) -> TestSuiteCoverage:
+        if not fn:
+            logger.info("no line coverage report provided")
+            logger.info("generating line coverage report")
+            coverage = coverage(snapshot, fn_out)
+            logger.info("generated line coverage report")
+        else:
+            logger.info("loading line coverage report: %s", fn)
+            coverage = TestSuiteCoverage.from_file(fn)
+            logger.info("loaded line coverage report")
+        return coverage
+
     @expose(
         help='precomputes the set of transformations for a given scenario.',
         arguments=[OPT_FILE,
@@ -104,17 +119,7 @@ class RepairController(ArgparseController):
 
         # FIXME build the snapshot
         snapshot = self.__placeholder_snapshot(fn_scenario)
-
-        # obtain coverage report
-        if not fn_coverage:
-            logger.info("no line coverage report provided")
-            logger.info("generating line coverage report")
-            # FIXME
-            raise NotImplementedError
-        else:
-            logger.info("loading line coverage report: %s", fn_coverage)
-            coverage = TestSuiteCoverage.from_file(fn_coverage)
-            logger.info("loaded line coverage report")
+        coverage = self.obtain_coverage(snapshot, fn_coverage)
 
         # obtain snippet database
         if not fn_snippets:
