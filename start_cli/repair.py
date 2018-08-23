@@ -1,21 +1,19 @@
 __all__ = ['RepairController']
 
+from typing import List
 import logging
 import json
 
+import start_repair
+from start_repair import compute_coverage, Snapshot
 from kaskara.analysis import Analysis
 from darjeeling.localization import Localization
 from darjeeling.transformation import Transformation
 from darjeeling.snippet import SnippetDatabase
+from darjeeling.candidate import Candidate
 from bugzoo.util import indent
 from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
-from start_repair.snapshot import Snapshot
-from start_repair.validate import validate
-from start_repair.localize import compute_coverage, localize
-from start_repair.analyze import analyze
-from start_repair.repair import repair
-from start_repair.repair import transformations as find_transformations
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from .opts import *
@@ -119,12 +117,34 @@ class RepairController(ArgparseController):
                                                       analysis)
 
         logger.info("ready to perform repair")
+        searcher = start_repair.search(snapshot,
+                                       localization=localization,
+                                       coverage=coverage,
+                                       analysis=analysis,
+                                       transformations=transformations,
+                                       threads=threads,
+                                       candidate_limit=candidate_limit,
+                                       time_limit_mins=time_limit_mins)
 
-        # # perform repair
-        # searcher = \
-        #     repair(snapshot, localization, coverage, analysis, transformations,
-        #            threads, candidate_limit, time_limit_mins)
-        # # FIXME
+        # FIXME obtain desired number of patches
+        logger.info("beginning search process")
+        patches = []  # type: List[Candidate]
+        try:
+            patches.append(next(searcher))
+        except StopIteration:
+            logger.info("failed to find a patch")
+
+        # report stats
+        num_test_evals = searcher.num_test_evals
+        num_candidate_evals = searcher.num_candidate_evals
+        time_running_mins = searcher.time_running.seconds / 60
+
+        logger.info("found %d plausible patches", len(patches))
+        logger.info("time taken: %.2f minutes", time_running_mins)
+        logger.info("# test evaluations: %d", searcher.num_test_evals)
+        logger.info("# candidate evaluations: %d", searcher.num_candidate_evals)
+
+        # FIXME write patches to disk?
 
     def obtain_localization(self, coverage):
         # type: (TestSuiteCoverage) -> Localization
@@ -132,7 +152,7 @@ class RepairController(ArgparseController):
         if not fn:
             logger.info("no localization file provided")
             logger.info("computing fault localization")
-            localization = localize(coverage)
+            localization = start_repair.localize(coverage)
             logger.info("computed fault localization:\n%s",
                         indent(repr(localization), 2))
         else:
@@ -152,10 +172,10 @@ class RepairController(ArgparseController):
         if not fn:
             logger.info("no transformation database provided")
             logger.info("generating transformation database")
-            transformations = find_transformations(snapshot,
-                                                   coverage,
-                                                   snippets,
-                                                   analysis)
+            transformations = start_repair.transformations(snapshot,
+                                                           coverage,
+                                                           snippets,
+                                                           analysis)
             logger.info("generated transformation database")
         else:
             logger.info("loading transformation database: %s", fn)
@@ -232,10 +252,10 @@ class RepairController(ArgparseController):
         analysis = self.obtain_analysis(snapshot)
 
         logger.info("precomputing transformations for scenario")
-        transformations = find_transformations(snapshot,
-                                               coverage,
-                                               snippets,
-                                               analysis)
+        transformations = start_repair.transformations(snapshot,
+                                                       coverage,
+                                                       snippets,
+                                                       analysis)
         logger.info("finished precomputing transformations")
 
         logger.info("writing precomputed transformations to disk: %s", fn_out)
@@ -267,7 +287,7 @@ class RepairController(ArgparseController):
                                          check_waypoints=True,
                                          use_workaround=True)
 
-        analysis = analyze(snapshot)
+        analysis = start_repair.analyze(snapshot)
         analysis.to_file(fn_out, snapshot)
         logger.info("saved static analysis to disk: %s", fn_out)
 
@@ -282,7 +302,7 @@ class RepairController(ArgparseController):
         logger.info("computing fault localization")
         logger.info("using line coverage report: %s", fn_coverage)
         coverage = TestSuiteCoverage.from_file(fn_coverage)
-        localization = localize(coverage)
+        localization = start_repair.localize(coverage)
         print(localization)
         logger.info('writing line coverage report to file: %s', fn_out)
         localization.to_file(fn_out)
@@ -353,5 +373,5 @@ class RepairController(ArgparseController):
                                          check_waypoints,
                                          use_workaround)
         logger.info("validating scenario")
-        validate(snapshot, verbose=self.app.pargs.verbose)
+        start_repair.validate(snapshot, verbose=self.app.pargs.verbose)
         logger.info("validated scenario")
