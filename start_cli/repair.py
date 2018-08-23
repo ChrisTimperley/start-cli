@@ -4,13 +4,15 @@ import logging
 import json
 
 from kaskara.analysis import Analysis
+from darjeeling.transformation import Transformation
 from darjeeling.snippet import SnippetDatabase
 from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
 from start_repair.snapshot import Snapshot
 from start_repair.validate import validate
-from start_repair.localize import coverage, localize
+from start_repair.localize import compute_coverage, localize
 from start_repair.analyze import analyze
+from start_repair.repair import repair
 from start_repair.repair import transformations as find_transformations
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -84,11 +86,14 @@ class RepairController(ArgparseController):
     @expose(
         help='attempts to repair the source code for a given scenario',
         arguments=[OPT_FILE,
+                   OPT_LIMIT_CANDIDATES,
+                   OPT_NUM_THREADS,
                    OPT_COVERAGE,
                    OPT_SNIPPETS,
                    OPT_TRANSFORMATIONS,
                    OPT_ANALYSIS,
                    OPT_TIMEOUT,
+                   OPT_TIMEOUT_REPAIR,
                    OPT_TIMEOUT_CONNECTION,
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
@@ -97,14 +102,52 @@ class RepairController(ArgparseController):
     def repair(self):
         # type: () -> None
         logger.info("performing repair")
+        candidate_limit = self.app.pargs.limit_candidates
+        time_limit_mins = self.app.pargs.timeout_repair
+        threads = self.app.pargs.threads
         snapshot = self.obtain_snapshot()
         analysis = self.obtain_analysis(snapshot)
         coverage = self.obtain_coverage(snapshot)
         snippets = self.obtain_snippets(snapshot)
 
-        # localize
+        # localization = self.obtain_localization(coverage)
+        transformations = self.obtain_transformations(snapshot,
+                                                      coverage,
+                                                      snippets,
+                                                      analysis)
 
-        # perform repair
+        logger.info("ready to perform repair")
+
+        # # perform repair
+        # searcher = \
+        #     repair(snapshot, localization, coverage, analysis, transformations,
+        #            threads, candidate_limit, time_limit_mins)
+        # # FIXME
+
+    def obtain_transformations(self,
+                               snapshot,    # type: Snapshot
+                               coverage,    # type: TestSuiteCoverage
+                               snippets,    # type: SnippetDatabase
+                               analysis     # type: Analysis
+                               ):           # type: (...) -> List[Transformation]
+        fn = self.app.pargs.transformations
+        if not fn:
+            logger.info("no transformation database provided")
+            logger.info("generating transformation database")
+            transformations = find_transformations(snapshot,
+                                                   coverage,
+                                                   snippets,
+                                                   analysis)
+            logger.info("generated transformation database")
+        else:
+            logger.info("loading transformation database: %s", fn)
+            # FIXME implement transformation database
+            with open(fn, 'r') as f:
+                jsn = json.load(f)
+            transformations = [Transformation.from_dict(d) for d in jsn]
+            logger.info("loaded transformation database (%d transformations)",
+                        len(transformations))
+        return transformations
 
     def obtain_coverage(self, snapshot):
         # type: (Snapshot) -> TestSuiteCoverage
@@ -112,7 +155,7 @@ class RepairController(ArgparseController):
         if not fn:
             logger.info("no line coverage report provided")
             logger.info("generating line coverage report")
-            coverage = coverage(snapshot, fn_out)
+            coverage = compute_coverage(snapshot)
             logger.info("generated line coverage report")
         else:
             logger.info("loading line coverage report: %s", fn)
@@ -251,7 +294,14 @@ class RepairController(ArgparseController):
 
         logger.info("performing fault localization for scenario")
         fn_out = "coverage.json"
-        cov = coverage(snapshot, fn_out)
+        cov = compute_coverage(snapshot)
+
+        logger.info("saving coverage to disk: %s", fn_out)
+        jsn = cov.to_dict()
+        with open(fn_out, 'w') as f:
+            json.dump(jsn, f)
+        logger.info("saved coverage to disk: %s", fn_out)
+
         logger.info("Coverage:\n%s", cov)
         logger.info("saved fault localization to disk: %s", fn_out)
 
