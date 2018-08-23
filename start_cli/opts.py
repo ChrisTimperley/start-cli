@@ -1,6 +1,10 @@
 OPT_FILE = (['file'], {'help': "path to the scenario config file"})
 OPT_COVERAGE_FILE = \
     (['file'], {'help': 'path to a JSON-encoded coverage report.'})
+OPT_LOCALIZATION = \
+    (['--localization'],
+     {'help': 'loads fault localization information from a given file.',
+      'type': 'str'})
 OPT_TRANSFORMATIONS = \
     (['--transformations'],
      {'help': 'load transformations from a specified transformation database file.',
