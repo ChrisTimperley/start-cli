@@ -102,6 +102,22 @@ class RepairController(ArgparseController):
             logger.info("loaded line coverage report")
         return coverage
 
+    def obtain_snippets(self,
+                        snapshot: Snapshot,
+                        fn: str
+                        ) -> SnippetDatabase:
+        if not fn:
+            logger.info("no snippet database provided")
+            logger.info("generating snippet database")
+            raise NotImplementedError  # FIXME
+            logger.info("generated snippet database: %d snippets",
+                        len(snippets))
+        else:
+            logger.info("loading provided snippet database: %s", fn)
+            snippets = SnippetDatabase.from_file(fn)
+            logger.info("loaded snippet database: %d snippets", len(snippets))
+        return snippets
+
     @expose(
         help='precomputes the set of transformations for a given scenario.',
         arguments=[OPT_FILE,
@@ -120,18 +136,7 @@ class RepairController(ArgparseController):
         # FIXME build the snapshot
         snapshot = self.__placeholder_snapshot(fn_scenario)
         coverage = self.obtain_coverage(snapshot, fn_coverage)
-
-        # obtain snippet database
-        if not fn_snippets:
-            logger.info("no snippet database provided")
-            logger.info("generating snippet database")
-
-            # FIXME generate snippet database
-            raise NotImplementedError
-        else:
-            logger.info("loading provided snippet database: %s", fn_snippets)
-            snippets = SnippetDatabase.from_file(fn_snippets)
-            logger.info("loaded snippet database: %d snippets", len(snippets))
+        snippets = self.obtain_snippets(snapshot, fn_snippets)
 
         # obtain analysis
         if not fn_analysis:
