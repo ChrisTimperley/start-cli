@@ -10,6 +10,11 @@ OPT_TIMEOUT_REPAIR = \
      {'help': 'maximum number of minutes to wait before terminating the search.',
       'type': int,
       'default': 60})
+OPT_NUM_THREADS = \
+    (['--threads'],
+     {'help': 'number of threads to use.',
+      'type': int,
+      'default': 1})
 OPT_SNIPPETS = \
     (['--snippets'],
      {'help': 'loads snippets from a specified snippet database file.',
