@@ -10,6 +10,11 @@ OPT_TIMEOUT_REPAIR = \
      {'help': 'maximum number of minutes to wait before terminating the search.',
       'type': int,
       'default': 60})
+OPT_LIMIT_CANDIDATES = \
+    (['--candidate-limit'],
+     {'help': 'maximum number of candidate patches that may be evaluated.',
+      'dest': 'limit_candidates',
+      'type': int})
 OPT_NUM_THREADS = \
     (['--threads'],
      {'help': 'number of threads to use.',
