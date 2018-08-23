@@ -4,7 +4,7 @@ OPT_COVERAGE_FILE = \
 OPT_LOCALIZATION = \
     (['--localization'],
      {'help': 'loads fault localization information from a given file.',
-      'type': 'str'})
+      'type': str})
 OPT_TRANSFORMATIONS = \
     (['--transformations'],
      {'help': 'load transformations from a specified transformation database file.',
