@@ -38,6 +38,16 @@ class RepairController(ArgparseController):
         # type: () -> None
         self.app.args.print_help()
 
+    def obtain_snapshot(self):
+        # type: () -> None
+        return self.__build_snapshot(self.app.pargs.file,
+                                     self.app.pargs.timeout_mission,
+                                     self.app.pargs.timeout_liveness,
+                                     self.app.pargs.timeout_connection,
+                                     self.app.pargs.speedup,
+                                     self.app.pargs.check_waypoints,
+                                     self.app.pargs.use_workaround)
+
     def __build_snapshot(self,
                          fn_scenario,           # type: str
                          timeout_mission,       # type: int
@@ -74,23 +84,31 @@ class RepairController(ArgparseController):
     @expose(
         help='attempts to repair the source code for a given scenario',
         arguments=[OPT_FILE,
+                   OPT_COVERAGE,
+                   OPT_SNIPPETS,
+                   OPT_TRANSFORMATIONS,
+                   OPT_ANALYSIS,
                    OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND])
     def repair(self):
         # type: () -> None
-        fn_scenario = self.app.pargs.file
+        logger.info("performing repair")
+        snapshot = self.obtain_snapshot()
+        analysis = self.obtain_analysis(snapshot)
+        coverage = self.obtain_coverage(snapshot)
+        snippets = self.obtain_snippets(snapshot)
 
-        scenario = self.__load_scenario(fn_scenario)
-        logger.info("repairing scenario")
+        # localize
 
-        logger.info("successfully repaired scenario")
+        # perform repair
 
-    def obtain_coverage(self,
-                        snapshot: Snapshot,
-                        fn: str
-                        ) -> TestSuiteCoverage:
+    def obtain_coverage(self, snapshot):
+        # type: (Snapshot) -> TestSuiteCoverage
+        fn = self.app.pargs.coverage
         if not fn:
             logger.info("no line coverage report provided")
             logger.info("generating line coverage report")
@@ -102,10 +120,9 @@ class RepairController(ArgparseController):
             logger.info("loaded line coverage report")
         return coverage
 
-    def obtain_snippets(self,
-                        snapshot: Snapshot,
-                        fn: str
-                        ) -> SnippetDatabase:
+    def obtain_snippets(self, snapshot):
+        # type: (Snapshot) -> SnippetDatabase
+        fn = self.app.pargs.snippets
         if not fn:
             logger.info("no snippet database provided")
             logger.info("generating snippet database")
@@ -118,10 +135,9 @@ class RepairController(ArgparseController):
             logger.info("loaded snippet database: %d snippets", len(snippets))
         return snippets
 
-    def obtain_analysis(self,
-                        snapshot: Snapshot,
-                        fn: str
-                        ) -> Analysis:
+    def obtain_analysis(self, snapshot):
+        # type: (Snapshot) -> Analysis
+        fn = self.app.pargs.analysis
         if not fn:
             logger.info("no static analysis provided")
             logger.info("performing static analysis")
@@ -136,23 +152,23 @@ class RepairController(ArgparseController):
     @expose(
         help='precomputes the set of transformations for a given scenario.',
         arguments=[OPT_FILE,
-                   OPT_SNIPPETS,
                    OPT_COVERAGE,
-                   OPT_ANALYSIS])
+                   OPT_SNIPPETS,
+                   OPT_ANALYSIS,
+                   OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
+                   OPT_WORKAROUND])
     def transformations(self):
         # type: () -> None
-        fn_scenario = self.app.pargs.file
-        fn_snippets = self.app.pargs.snippets
-        fn_coverage = self.app.pargs.coverage
-        fn_analysis = self.app.pargs.analysis
-
         fn_out = "transformations.json"
 
-        # FIXME build the snapshot
-        snapshot = self.__placeholder_snapshot(fn_scenario)
-        coverage = self.obtain_coverage(snapshot, fn_coverage)
-        snippets = self.obtain_snippets(snapshot, fn_snippets)
-        analysis = self.obtain_analysis(snapshot, fn_analysis)
+        snapshot = self.obtain_snapshot()
+        coverage = self.obtain_coverage(snapshot)
+        snippets = self.obtain_snippets(snapshot)
+        analysis = self.obtain_analysis(snapshot)
 
         logger.info("precomputing transformations for scenario")
         transformations = find_transformations(snapshot,
