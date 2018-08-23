@@ -1,9 +1,13 @@
 OPT_FILE = (['file'], {'help': "path to the scenario config file"})
 OPT_COVERAGE_FILE = \
     (['file'], {'help': 'path to a JSON-encoded coverage report.'})
+OPT_TRANSFORMATIONS = \
+    (['--transformations'],
+     {'help': 'load transformations from a specified transformation database file.',
+      'type': str})
 OPT_SNIPPETS = \
     (['--snippets'],
-     {'help': 'path to a JSON-encoded snippet database.',
+     {'help': 'loads snippets from a specified snippet database file.',
       'type': str})
 OPT_COVERAGE = \
     (['--coverage'],
