@@ -4,8 +4,10 @@ import logging
 import json
 
 from kaskara.analysis import Analysis
+from darjeeling.localization import Localization
 from darjeeling.transformation import Transformation
 from darjeeling.snippet import SnippetDatabase
+from bugzoo.util import indent
 from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
 from start_repair.snapshot import Snapshot
@@ -88,6 +90,7 @@ class RepairController(ArgparseController):
         arguments=[OPT_FILE,
                    OPT_LIMIT_CANDIDATES,
                    OPT_NUM_THREADS,
+                   OPT_LOCALIZATION,
                    OPT_COVERAGE,
                    OPT_SNIPPETS,
                    OPT_TRANSFORMATIONS,
@@ -109,12 +112,11 @@ class RepairController(ArgparseController):
         analysis = self.obtain_analysis(snapshot)
         coverage = self.obtain_coverage(snapshot)
         snippets = self.obtain_snippets(snapshot)
-
-        # localization = self.obtain_localization(coverage)
-        transformations = self.obtain_transformations(snapshot,
-                                                      coverage,
-                                                      snippets,
-                                                      analysis)
+        localization = self.obtain_localization(coverage)
+        #transformations = self.obtain_transformations(snapshot,
+        #                                              coverage,
+        #                                              snippets,
+        #                                              analysis)
 
         logger.info("ready to perform repair")
 
@@ -123,6 +125,22 @@ class RepairController(ArgparseController):
         #     repair(snapshot, localization, coverage, analysis, transformations,
         #            threads, candidate_limit, time_limit_mins)
         # # FIXME
+
+    def obtain_localization(self, coverage):
+        # type: (TestSuiteCoverage) -> Localization
+        fn = self.app.pargs.localization
+        if not fn:
+            logger.info("no localization file provided")
+            logger.info("computing fault localization")
+            localization = localize(coverage)
+            logger.info("computed fault localization:\n%s",
+                        indent(repr(localization), 2))
+        else:
+            logger.info("loading localization from file: %s", fn)
+            localization = Localization.from_file(fn)
+            logger.info("loaded localization from file:\n%s",
+                        indent(repr(localization), 2))
+        return localization
 
     def obtain_transformations(self,
                                snapshot,    # type: Snapshot
