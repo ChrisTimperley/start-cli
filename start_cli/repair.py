@@ -113,10 +113,10 @@ class RepairController(ArgparseController):
         coverage = self.obtain_coverage(snapshot)
         snippets = self.obtain_snippets(snapshot)
         localization = self.obtain_localization(coverage)
-        #transformations = self.obtain_transformations(snapshot,
-        #                                              coverage,
-        #                                              snippets,
-        #                                              analysis)
+        transformations = self.obtain_transformations(snapshot,
+                                                      coverage,
+                                                      snippets,
+                                                      analysis)
 
         logger.info("ready to perform repair")
 
@@ -278,11 +278,15 @@ class RepairController(ArgparseController):
     def localize(self):
         # type: () -> None
         fn_coverage = self.app.pargs.file
+        fn_out = 'localization.json'
         logger.info("computing fault localization")
         logger.info("using line coverage report: %s", fn_coverage)
         coverage = TestSuiteCoverage.from_file(fn_coverage)
         localization = localize(coverage)
         print(localization)
+        logger.info('writing line coverage report to file: %s', fn_out)
+        localization.to_file(fn_out)
+        logger.info('wrote line coverage report to file: %s', fn_out)
 
     @expose(
         help='computes line coverage for a given scenario.',
