@@ -5,6 +5,11 @@ OPT_TRANSFORMATIONS = \
     (['--transformations'],
      {'help': 'load transformations from a specified transformation database file.',
       'type': str})
+OPT_TIMEOUT_REPAIR = \
+    (['--timeout-repair'],
+     {'help': 'maximum number of minutes to wait before terminating the search.',
+      'type': int,
+      'default': 60})
 OPT_SNIPPETS = \
     (['--snippets'],
      {'help': 'loads snippets from a specified snippet database file.',
