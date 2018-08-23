@@ -118,6 +118,21 @@ class RepairController(ArgparseController):
             logger.info("loaded snippet database: %d snippets", len(snippets))
         return snippets
 
+    def obtain_analysis(self,
+                        snapshot: Snapshot,
+                        fn: str
+                        ) -> Analysis:
+        if not fn:
+            logger.info("no static analysis provided")
+            logger.info("performing static analysis")
+            raise NotImplementedError  # FIXME
+            logger.info("performed static analysis")
+        else:
+            logger.info("loading provided static analysis: %s", fn)
+            analysis = Analysis.from_file(fn, snapshot)
+            logger.info("loaded static analysis")
+        return analysis
+
     @expose(
         help='precomputes the set of transformations for a given scenario.',
         arguments=[OPT_FILE,
@@ -137,18 +152,7 @@ class RepairController(ArgparseController):
         snapshot = self.__placeholder_snapshot(fn_scenario)
         coverage = self.obtain_coverage(snapshot, fn_coverage)
         snippets = self.obtain_snippets(snapshot, fn_snippets)
-
-        # obtain analysis
-        if not fn_analysis:
-            logger.info("no static analysis provided")
-            logger.info("performing static analysis")
-
-            # FIXME
-            raise NotImplementedError
-        else:
-            logger.info("loading provided static analysis: %s", fn_analysis)
-            analysis = Analysis.from_file(fn_analysis, snapshot)
-            logger.info("loaded static analysis")
+        analysis = self.obtain_analysis(snapshot, fn_analysis)
 
         logger.info("precomputing transformations for scenario")
         transformations = find_transformations(snapshot,
