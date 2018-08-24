@@ -222,7 +222,7 @@ class RepairController(ArgparseController):
         if not fn:
             logger.info("no static analysis provided")
             logger.info("performing static analysis")
-            raise NotImplementedError  # FIXME
+            analysis = start_repair.analyze(snapshot, files)
             logger.info("performed static analysis")
         else:
             logger.info("loading provided static analysis: %s", fn)
@@ -258,7 +258,7 @@ class RepairController(ArgparseController):
 
         logger.info("saving snippet database to file: %s", fn_out)
         try:
-            snippets.to_file(fn_out, snapshot)
+            snippets.to_file(fn_out)
         except Exception:
             logger.exception("failed to save snippet database file: %s", fn_out)  # noqa: pycodestyle
             raise
@@ -304,7 +304,17 @@ class RepairController(ArgparseController):
 
     @expose(
         help='performs static analysis of a given scenario.',
-        arguments=[OPT_FILE])
+        arguments=[OPT_FILE,
+                   OPT_COVERAGE,
+                   OPT_LOCALIZATION,
+                   OPT_SNIPPETS,
+                   OPT_ANALYSIS,
+                   OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
+                   OPT_WORKAROUND])
     def analyze(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
@@ -312,17 +322,10 @@ class RepairController(ArgparseController):
         logger.info("performing static analyis of scenario")
         fn_out = "analysis.json"
 
-        # NOTE since we never interact with the test suite, we can use
-        #   placeholder values to build the snapshot.
-        snapshot = self.__build_snapshot(fn_scenario,
-                                         timeout_mission=1,
-                                         timeout_liveness=1,
-                                         timeout_connection=1,
-                                         speedup=1,
-                                         check_waypoints=True,
-                                         use_workaround=True)
-
-        analysis = start_repair.analyze(snapshot)
+        snapshot = self.obtain_snapshot()
+        coverage = self.obtain_coverage(snapshot)
+        localization = self.obtain_localization(coverage)
+        analysis = start_repair.analyze(snapshot, localization.files)
         analysis.to_file(fn_out, snapshot)
         logger.info("saved static analysis to disk: %s", fn_out)
 
