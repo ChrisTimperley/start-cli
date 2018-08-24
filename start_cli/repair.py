@@ -113,6 +113,7 @@ class RepairController(ArgparseController):
         snippets = self.obtain_snippets(snapshot, analysis)
         transformations = self.obtain_transformations(snapshot,
                                                       coverage,
+                                                      localization,
                                                       snippets,
                                                       analysis)
 
@@ -163,17 +164,19 @@ class RepairController(ArgparseController):
         return localization
 
     def obtain_transformations(self,
-                               snapshot,    # type: Snapshot
-                               coverage,    # type: TestSuiteCoverage
-                               snippets,    # type: SnippetDatabase
-                               analysis     # type: Analysis
-                               ):           # type: (...) -> List[Transformation]
+                               snapshot,        # type: Snapshot
+                               coverage,        # type: TestSuiteCoverage
+                               localization,    # type: Localization
+                               snippets,        # type: SnippetDatabase
+                               analysis         # type: Analysis
+                               ):               # type: (...) -> List[Transformation]
         fn = self.app.pargs.transformations
         if not fn:
             logger.info("no transformation database provided")
             logger.info("generating transformation database")
             transformations = start_repair.transformations(snapshot,
                                                            coverage,
+                                                           localization,
                                                            snippets,
                                                            analysis)
             logger.info("generated transformation database")
@@ -268,6 +271,7 @@ class RepairController(ArgparseController):
         help='precomputes the set of transformations for a given scenario.',
         arguments=[OPT_FILE,
                    OPT_COVERAGE,
+                   OPT_LOCALIZATION,
                    OPT_SNIPPETS,
                    OPT_ANALYSIS,
                    OPT_TIMEOUT,
@@ -289,6 +293,7 @@ class RepairController(ArgparseController):
         logger.info("precomputing transformations for scenario")
         transformations = start_repair.transformations(snapshot,
                                                        coverage,
+                                                       localization,
                                                        snippets,
                                                        analysis)
         logger.info("finished precomputing transformations")
