@@ -107,10 +107,10 @@ class RepairController(ArgparseController):
         time_limit_mins = self.app.pargs.timeout_repair
         threads = self.app.pargs.threads
         snapshot = self.obtain_snapshot()
-        analysis = self.obtain_analysis(snapshot)
         coverage = self.obtain_coverage(snapshot)
-        snippets = self.obtain_snippets(snapshot)
         localization = self.obtain_localization(coverage)
+        analysis = self.obtain_analysis(snapshot, localization.files)
+        snippets = self.obtain_snippets(snapshot, analysis)
         transformations = self.obtain_transformations(snapshot,
                                                       coverage,
                                                       snippets,
@@ -201,13 +201,13 @@ class RepairController(ArgparseController):
             logger.info("loaded line coverage report")
         return coverage
 
-    def obtain_snippets(self, snapshot):
-        # type: (Snapshot) -> SnippetDatabase
+    def obtain_snippets(self, snapshot, analysis):
+        # type: (Snapshot, Analysis) -> SnippetDatabase
         fn = self.app.pargs.snippets
         if not fn:
             logger.info("no snippet database provided")
             logger.info("generating snippet database")
-            raise NotImplementedError  # FIXME
+            snippets = SnippetDatabase.from_statements(analysis.statements)
             logger.info("generated snippet database: %d snippets",
                         len(snippets))
         else:
@@ -216,8 +216,8 @@ class RepairController(ArgparseController):
             logger.info("loaded snippet database: %d snippets", len(snippets))
         return snippets
 
-    def obtain_analysis(self, snapshot):
-        # type: (Snapshot) -> Analysis
+    def obtain_analysis(self, snapshot, files):
+        # type: (Snapshot, List[str]) -> Analysis
         fn = self.app.pargs.analysis
         if not fn:
             logger.info("no static analysis provided")
@@ -229,6 +229,40 @@ class RepairController(ArgparseController):
             analysis = Analysis.from_file(fn, snapshot)
             logger.info("loaded static analysis")
         return analysis
+
+    @expose(
+        help='builds the snippet database for a given scenario.',
+        arguments=[OPT_FILE,
+                   OPT_COVERAGE,
+                   OPT_LOCALIZATION,
+                   OPT_SNIPPETS,
+                   OPT_ANALYSIS,
+                   OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
+                   OPT_WORKAROUND])
+    def snippets(self):
+        # type: () -> None
+        fn_out = 'snippets.json'  # FIXME
+
+        snapshot = self.obtain_snapshot()
+        coverage = self.obtain_coverage(snapshot)
+        localization = self.obtain_localization(coverage)
+        analysis = self.obtain_analysis(snapshot, localization.files)
+
+        logger.info("building snippet database for a given scenario")
+        snippets = SnippetDatabase.from_statements(analysis.statements)
+        logger.info("built snippet database for a given scenario")
+
+        logger.info("saving snippet database to file: %s", fn_out)
+        try:
+            snippets.to_file(fn_out, snapshot)
+        except Exception:
+            logger.exception("failed to save snippet database file: %s", fn_out)  # noqa: pycodestyle
+            raise
+        logger.info("saved snippet database to file: %s", fn_out)
 
     @expose(
         help='precomputes the set of transformations for a given scenario.',
@@ -248,8 +282,9 @@ class RepairController(ArgparseController):
 
         snapshot = self.obtain_snapshot()
         coverage = self.obtain_coverage(snapshot)
-        snippets = self.obtain_snippets(snapshot)
-        analysis = self.obtain_analysis(snapshot)
+        localization = self.obtain_localization(coverage)
+        analysis = self.obtain_analysis(snapshot, localization.files)
+        snippets = self.obtain_snippets(snapshot, analysis)
 
         logger.info("precomputing transformations for scenario")
         transformations = start_repair.transformations(snapshot,
