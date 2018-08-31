@@ -8,34 +8,40 @@ To obtain a list of commands and to learn more about a given command or
 group of commands:
 
 ```
-$ startcli --help
-$ startcli repair --help
-$ startcli repair validate --help
+$ start-cli --help
 ```
 
-To sanity check the test suite behaviour of a given scenario:
+Sanity checking can be used to ensure that the test suite for a given
+scenario behaves as expected (i.e., it fails when the attack is performed
+but passes when it is not). To perform sanity checking:
 
 ```
-$ startcli repair validate ~/start/scenarios/AIS-Scenario1/scenario.config
+$ start-cli validate ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
 
 To attempt to find a repair for a given scenario:
 
 ```
-$ startcli repair repair ~/start/scenarios/AIS-Scenario1/scenario.config
+$ start-cli repair ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
 
-To perform static analysis on the source code for a given scenario:
+To precompute a static analysis of the source code for a given scenario:
 
 ```
-$ startcli repair analyze ~/start/scenarios/AIS-Scenario1/scenario.config
-$ cat analysis.json
+$ start-cli analyze ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
 
-To localise the fault for a given scenario and to compute its coverage
-information:
+To precompute the line coverage information for a given scenario:
 
 ```
-$ startcli repair localize ~/start/scenarios/AIS-Scenario1/scenario.config
+$ start-cli coverage ~/start/scenarios/AIS-Scenario1/scenario.config
+```
+
+To precompute the fault localization for a given scenario:
+
+```
+$ start-cli localize ~/start/scenarios/AIS-Scenario1/scenario.config
 $ cat coverage.json
 ```
+
+## Debugging
