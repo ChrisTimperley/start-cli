@@ -1,11 +1,10 @@
-# start-cli
+# START Command-Line Interface
 
-Provides a command-line interface to START
+Provides a command-line interface to START.
 
 ## Commands
 
-To obtain a list of commands and to learn more about a given command or
-group of commands:
+To obtain a list of commands and to learn more about a given command:
 
 ```
 $ start-cli --help
@@ -41,7 +40,6 @@ To precompute the fault localization for a given scenario:
 
 ```
 $ start-cli localize ~/start/scenarios/AIS-Scenario1/scenario.config
-$ cat coverage.json
 ```
 
 ## Debugging
