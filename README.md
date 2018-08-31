@@ -64,3 +64,11 @@ passed to the command to speed-up the process or to aid in debugging.
 * `--transformations`: path to a precomputed transformations database file.
 * `--snippets`: path to a precomputed snippets database file.
 * `--analysis`: path to a precomputed static analysis file.
+
+Additionally, the following commands are exposed:
+
+* `--speedup`: simulation speedup factor.
+* `--time-limit`: the number of seconds that may pass without success until a
+    mission is considered a failure.
+* `--timeout-connection`: the number of seconds to wait when connecting to the
+    SITL before aborting.
