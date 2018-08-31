@@ -42,4 +42,10 @@ To precompute the fault localization for a given scenario:
 $ start-cli localize ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
 
+To build the snippet database for a given scenario:
+
+```
+$ start-cli snippets ~/start/scenarios/AIS-Scenario1/scenario.config
+```
+
 ## Debugging
