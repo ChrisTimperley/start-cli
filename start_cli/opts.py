@@ -1,6 +1,10 @@
 OPT_FILE = (['file'], {'help': "path to the scenario config file"})
 OPT_COVERAGE_FILE = \
     (['file'], {'help': 'path to a JSON-encoded coverage report.'})
+OPT_OUTPUT = \
+    (['--output'],
+     {'help': 'location of the file (or directory) to which the results should be written.',
+      'type': str})
 OPT_LOCALIZATION = \
     (['--localization'],
      {'help': 'loads fault localization information from a given file.',
