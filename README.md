@@ -55,3 +55,12 @@ $ start-cli transformations ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
 
 ## Debugging
+
+For almost all of the commands exposed by the CLI, precomputed files can be
+passed to the command to speed-up the process or to aid in debugging.
+
+* `--coverage`: path to a precomputed coverage file.
+* `--localization`: path to a precomputed fault localisation file.
+* `--transformations`: path to a precomputed transformations database file.
+* `--snippets`: path to a precomputed snippets database file.
+* `--analysis`: path to a precomputed static analysis file.
