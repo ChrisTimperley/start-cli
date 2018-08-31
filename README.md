@@ -48,4 +48,10 @@ To build the snippet database for a given scenario:
 $ start-cli snippets ~/start/scenarios/AIS-Scenario1/scenario.config
 ```
 
+To precompute the set of transformations for a given scenario:
+
+```
+$ start-cli transformations ~/start/scenarios/AIS-Scenario1/scenario.config
+```
+
 ## Debugging
