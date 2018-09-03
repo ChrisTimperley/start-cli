@@ -78,3 +78,43 @@ OPT_LIVENESS = \
       'type': int,
       'dest': 'timeout_liveness',
       'default': 1})
+
+OPT_CHECK_SCOPE = \
+    (['--check-scope'],
+     {'help': 'prevents transformations with out-of-scope variables.',
+      'dest': 'check_scope',
+      'action': 'store_true'})
+OPT_CHECK_SYNTAX = \
+    (['--check-syntax-scope'],
+     {'help': 'prevents transformations with out-of-scope keywords..',
+      'dest': 'check_syntax_scope',
+      'action': 'store_true'})
+OPT_IGNORE_DEAD_CODE = \
+    (['--ignore-dead-code'],
+     {'help': 'prevents insertion of known dead-code.',
+      'dest': 'ignore_dead_code',
+      'action': 'store_true'})
+OPT_IGNORE_UNTYPED_RETURNS = \
+    (['--ignore-untyped-returns'],
+     {'help': 'do not insert "return" if types mismatch.',
+      'dest': 'ignore_untyped_returns',
+      'action': 'store_true'})
+OPT_IGNORE_EQUIV_PREPENDS = \
+    (['--ignore-equiv-prepends'],
+     {'help': 'prevents equivalent prepend transformations.',
+      'dest': 'ignore_equiv_prepends',
+      'action': 'store_true'})
+OPT_ONLY_INSERT_EXECUTED = \
+    (['--only-insert-executed'],
+     {'help': 'restricts transformations to those that involve executed code.',
+      'dest': 'only_insert_executed',
+      'action': 'store_true'})
+
+OPTS_REPAIR = [
+    OPT_CHECK_SCOPE,
+    OPT_CHECK_SYNTAX,
+    OPT_IGNORE_DEAD_CODE,
+    OPT_IGNORE_UNTYPED_RETURNS,
+    OPT_IGNORE_EQUIV_PREPENDS,
+    OPT_ONLY_INSERT_EXECUTED
+]

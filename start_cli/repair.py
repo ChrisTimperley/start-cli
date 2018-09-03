@@ -13,6 +13,7 @@ from darjeeling.localization import Localization
 from darjeeling.transformation import Transformation
 from darjeeling.snippet import SnippetDatabase
 from darjeeling.candidate import Candidate
+from darjeeling.settings import Settings as RepairSettings
 from bugzoo.util import indent
 from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
@@ -106,7 +107,7 @@ class RepairController(ArgparseController):
                      {'help': 'output patch directory',
                       'default': 'patches',
                       'type': str})
-                   ])
+                   ] + OPTS_REPAIR)
     def repair(self):
         # type: () -> None
         logger.info("performing repair")
@@ -124,6 +125,7 @@ class RepairController(ArgparseController):
         candidate_limit = self.app.pargs.limit_candidates
         time_limit_mins = self.app.pargs.timeout_repair
         threads = self.app.pargs.threads
+        settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
         coverage = self.obtain_coverage(snapshot)
         localization = self.obtain_localization(coverage)
@@ -133,7 +135,8 @@ class RepairController(ArgparseController):
                                                       coverage,
                                                       localization,
                                                       snippets,
-                                                      analysis)
+                                                      analysis,
+                                                      settings)
 
         logger.info("ready to perform repair")
         searcher = start_repair.search(snapshot,
@@ -181,6 +184,16 @@ class RepairController(ArgparseController):
                 raise
             logger.debug("wrote patch to %s", fn_patch)
 
+    def obtain_settings(self):
+        # type: () -> RepairSettings
+        return RepairSettings(
+            use_scope_checking=self.app.pargs.check_scope,
+            use_syntax_scope_checking=self.app.pargs.check_syntax_scope,
+            only_insert_executed_code=self.app.pargs.only_insert_executed,
+            ignore_untyped_returns=self.app.pargs.ignore_untyped_returns,
+            ignore_equivalent_appends=self.app.pargs.ignore_equiv_prepends,
+            ignore_dead_code=self.app.pargs.ignore_dead_code)
+
     def obtain_localization(self, coverage):
         # type: (TestSuiteCoverage) -> Localization
         fn = self.app.pargs.localization
@@ -202,7 +215,8 @@ class RepairController(ArgparseController):
                                coverage,        # type: TestSuiteCoverage
                                localization,    # type: Localization
                                snippets,        # type: SnippetDatabase
-                               analysis         # type: Analysis
+                               analysis,        # type: Analysis
+                               settings         # type: RepairSettings
                                ):               # type: (...) -> List[Transformation]
         fn = self.app.pargs.transformations
         if not fn:
@@ -212,7 +226,8 @@ class RepairController(ArgparseController):
                                                            coverage,
                                                            localization,
                                                            snippets,
-                                                           analysis)
+                                                           analysis,
+                                                           settings)
             logger.info("generated transformation database")
         else:
             logger.info("loading transformation database: %s", fn)
@@ -323,11 +338,12 @@ class RepairController(ArgparseController):
                      {'help': 'output file for transformation database',
                       'default': 'transformations.json',
                       'type': str})
-                   ])
+                   ] + OPTS_REPAIR)
     def transformations(self):
         # type: () -> None
         fn_out = self.app.pargs.output
 
+        settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
         coverage = self.obtain_coverage(snapshot)
         localization = self.obtain_localization(coverage)
@@ -339,7 +355,8 @@ class RepairController(ArgparseController):
                                                        coverage,
                                                        localization,
                                                        snippets,
-                                                       analysis)
+                                                       analysis,
+                                                       settings)
         logger.info("finished precomputing transformations")
 
         logger.info("writing precomputed transformations to disk: %s", fn_out)
