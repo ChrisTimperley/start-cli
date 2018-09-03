@@ -385,10 +385,16 @@ class RepairController(ArgparseController):
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
-                   OPT_WORKAROUND])
+                   OPT_WORKAROUND,
+                   (['--output'],
+                     {'help': 'output file to coverage report',
+                      'default': 'coverage.json',
+                      'type': str})
+                   ])
     def coverage(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
+        fn_out = self.app.pargs.output
         timeout_mission = self.app.pargs.timeout_mission
         timeout_liveness = self.app.pargs.timeout_liveness
         timeout_connection = self.app.pargs.timeout_connection
@@ -404,7 +410,6 @@ class RepairController(ArgparseController):
                                          use_workaround)
 
         logger.info("performing fault localization for scenario")
-        fn_out = "coverage.json"
         cov = compute_coverage(snapshot)
 
         logger.info("saving coverage to disk: %s", fn_out)
