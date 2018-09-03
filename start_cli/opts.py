@@ -6,10 +6,6 @@ OPT_ARCHIVE = \
      {'help': 'path to a compressed Docker image.',
       'dest': 'fn_archive',
       'type': str})
-OPT_OUTPUT = \
-    (['--output'],
-     {'help': 'location of the file (or directory) to which the results should be written.',
-      'type': str})
 OPT_LOCALIZATION = \
     (['--localization'],
      {'help': 'loads fault localization information from a given file.',
