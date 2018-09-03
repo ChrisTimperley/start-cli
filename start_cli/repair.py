@@ -245,10 +245,15 @@ class RepairController(ArgparseController):
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
-                   OPT_WORKAROUND])
+                   OPT_WORKAROUND,
+                   (['--output'],
+                     {'help': 'output file for snippet database',
+                      'default': 'snippets.json',
+                      'type': str})
+                   ])
     def snippets(self):
         # type: () -> None
-        fn_out = 'snippets.json'  # FIXME
+        fn_out = self.app.pargs.output
 
         snapshot = self.obtain_snapshot()
         coverage = self.obtain_coverage(snapshot)
