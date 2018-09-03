@@ -336,15 +336,27 @@ class RepairController(ArgparseController):
 
     @expose(
         help='computes fault localization from a line coverage report.',
-        arguments=[OPT_COVERAGE_FILE]
-    )
+        arguments=[OPT_FILE,
+                   OPT_COVERAGE,
+                   OPT_TIMEOUT,
+                   OPT_TIMEOUT_CONNECTION,
+                   OPT_LIVENESS,
+                   OPT_SPEEDUP,
+                   OPT_CHECK_WAYPOINTS,
+                   OPT_WORKAROUND,
+                   (['--output'],
+                     {'help': 'output file to write results to.',
+                      'default': 'localization.json',
+                      'type': str})
+                   ])
     def localize(self):
         # type: () -> None
         fn_coverage = self.app.pargs.file
-        fn_out = 'localization.json'
+        fn_out = self.app.pargs.output
+        snapshot = self.obtain_snapshot()
+        coverage = self.obtain_coverage(snapshot)
+
         logger.info("computing fault localization")
-        logger.info("using line coverage report: %s", fn_coverage)
-        coverage = TestSuiteCoverage.from_file(fn_coverage)
         localization = start_repair.localize(coverage)
         print(localization)
         logger.info('writing line coverage report to file: %s', fn_out)
