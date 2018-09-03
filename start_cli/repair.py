@@ -3,6 +3,7 @@ __all__ = ['RepairController']
 from typing import List
 import logging
 import json
+import os
 
 import start_repair
 from start_repair import compute_coverage, Snapshot
@@ -99,10 +100,26 @@ class RepairController(ArgparseController):
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
-                   OPT_WORKAROUND])
+                   OPT_WORKAROUND,
+                   (['--output'],
+                     {'help': 'output patch directory',
+                      'default': 'patches',
+                      'type': str})
+                   ])
     def repair(self):
         # type: () -> None
         logger.info("performing repair")
+
+        # ensure patch directory exists
+        dir_patches = self.app.pargs.output
+        logger.debug("ensuring patch directory exists: %s", dir_patches)
+        try:
+            os.makedirs(dir_patches, exist_ok=True)
+        except Exception:
+            logger.exception("failed to ensure existence of patch directory")
+            raise
+        logger.debug("ensured patch directory exists")
+
         candidate_limit = self.app.pargs.limit_candidates
         time_limit_mins = self.app.pargs.timeout_repair
         threads = self.app.pargs.threads
