@@ -27,7 +27,7 @@ class ImageController(ArgparseController):
         arguments=[OPT_FILE,
                    (['--output'],
                     {'help': 'location of the file (or directory) to which the results should be written.',
-                     'required': True,
+                     'default': 'image.tar.gz',
                      'type': str})
                    ])
     def build(self):
