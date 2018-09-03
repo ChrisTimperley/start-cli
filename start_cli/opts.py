@@ -73,7 +73,7 @@ OPT_SPEEDUP = \
       'type': int,
       'default': 10})
 OPT_LIVENESS = \
-    (['--liveness-timeout'],
+    (['--timeout-liveness'],
      {'help': 'the number of seconds that may pass without communication with the rover until the mission is aborted.',
       'type': int,
       'dest': 'timeout_liveness',
