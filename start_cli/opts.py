@@ -1,6 +1,11 @@
 OPT_FILE = (['file'], {'help': "path to the scenario config file"})
 OPT_COVERAGE_FILE = \
     (['file'], {'help': 'path to a JSON-encoded coverage report.'})
+OPT_ARCHIVE = \
+    (['--archive'],
+     {'help': 'path to a compressed Docker image.',
+      'dest': 'fn_archive',
+      'type': str})
 OPT_OUTPUT = \
     (['--output'],
      {'help': 'location of the file (or directory) to which the results should be written.',
