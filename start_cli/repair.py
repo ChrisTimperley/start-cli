@@ -167,7 +167,19 @@ class RepairController(ArgparseController):
         if not patches:
             sys.exit(1)
 
-        # FIXME write patches to disk?
+        # write patches to disk
+        for (num, patch) in enumerate(patches):
+            diff = str(patch)
+            fn_patch = "{}.diff".format(num)
+            fn_patch = os.path.join(dir_patches, fn_patch)
+            logger.debug("writing patch to %s", fn_patch)
+            try:
+                with open(fn_patch, 'w') as f:
+                    f.write(diff)
+            except Exception:
+                logger.exception("failed to write patch: %s", fn_patch)
+                raise
+            logger.debug("wrote patch to %s", fn_patch)
 
     def obtain_localization(self, coverage):
         # type: (TestSuiteCoverage) -> Localization
