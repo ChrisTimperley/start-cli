@@ -4,6 +4,7 @@ from typing import List
 import logging
 import json
 import os
+import sys
 
 import start_repair
 from start_repair import compute_coverage, Snapshot
@@ -161,6 +162,10 @@ class RepairController(ArgparseController):
         logger.info("time taken: %.2f minutes", time_running_mins)
         logger.info("# test evaluations: %d", searcher.num_test_evals)
         logger.info("# candidate evaluations: %d", searcher.num_candidate_evals)
+
+        # if no patches are found, exit with code 1
+        if not patches:
+            sys.exit(1)
 
         # FIXME write patches to disk?
 
