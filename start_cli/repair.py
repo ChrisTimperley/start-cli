@@ -329,13 +329,17 @@ class RepairController(ArgparseController):
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
-                   OPT_WORKAROUND])
+                   OPT_WORKAROUND,
+                   (['--output'],
+                     {'help': 'output file for static analysis',
+                      'default': 'analysis.json',
+                      'type': str})
+                   ])
     def analyze(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
-
+        fn_out = self.app.pargs.output
         logger.info("performing static analyis of scenario")
-        fn_out = "analysis.json"
 
         snapshot = self.obtain_snapshot()
         coverage = self.obtain_coverage(snapshot)
