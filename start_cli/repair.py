@@ -284,10 +284,15 @@ class RepairController(ArgparseController):
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
-                   OPT_WORKAROUND])
+                   OPT_WORKAROUND,
+                   (['--output'],
+                     {'help': 'output file for transformation database',
+                      'default': 'transformations.json',
+                      'type': str})
+                   ])
     def transformations(self):
         # type: () -> None
-        fn_out = "transformations.json"
+        fn_out = self.app.pargs.output
 
         snapshot = self.obtain_snapshot()
         coverage = self.obtain_coverage(snapshot)
