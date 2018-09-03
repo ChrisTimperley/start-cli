@@ -429,21 +429,9 @@ class RepairController(ArgparseController):
         # type: () -> None
         fn_scenario = self.app.pargs.file
         fn_out = self.app.pargs.output
-        timeout_mission = self.app.pargs.timeout_mission
-        timeout_liveness = self.app.pargs.timeout_liveness
-        timeout_connection = self.app.pargs.timeout_connection
-        speedup = self.app.pargs.speedup
-        use_workaround = self.app.pargs.use_workaround
-        check_waypoints = self.app.pargs.check_waypoints
-        snapshot = self.__build_snapshot(fn_scenario,
-                                         timeout_mission,
-                                         timeout_liveness,
-                                         timeout_connection,
-                                         speedup,
-                                         check_waypoints,
-                                         use_workaround)
 
         logger.info("performing fault localization for scenario")
+        snapshot = self.obtain_snapshot()
         cov = compute_coverage(snapshot)
 
         logger.info("saving coverage to disk: %s", fn_out)
