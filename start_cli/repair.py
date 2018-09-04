@@ -5,15 +5,18 @@ import logging
 import json
 import os
 import sys
+import docker
 
 import start_repair
 from start_repair import compute_coverage, Snapshot
 from kaskara.analysis import Analysis
+from darjeeling.problem import Problem
 from darjeeling.localization import Localization
 from darjeeling.transformation import Transformation
 from darjeeling.snippet import SnippetDatabase
 from darjeeling.candidate import Candidate
 from darjeeling.settings import Settings as RepairSettings
+from bugzoo.manager import BugZoo
 from bugzoo.util import indent
 from bugzoo.core.coverage import TestSuiteCoverage
 from start_core.scenario import Scenario
@@ -42,6 +45,21 @@ class RepairController(ArgparseController):
     def default(self):
         # type: () -> None
         self.app.args.print_help()
+
+    def obtain_bugzoo(self, snapshot):
+        # type: (Snapshot) -> BugZoo
+        # dkr = _docker_client()
+        bz = BugZoo()  # FIXME pass client version
+        bz.bugs.add(snapshot)
+        return bz
+
+    def obtain_problem(self, bz, snapshot, coverage, analysis=None, settings=None):
+        # type: (BugZoo, Snapshot) -> Problem
+        return Problem(bz,
+                       snapshot,
+                       coverage,
+                       analysis=analysis,
+                       settings=settings)
 
     def obtain_snapshot(self):
         # type: () -> None
@@ -127,11 +145,14 @@ class RepairController(ArgparseController):
         threads = self.app.pargs.threads
         settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
+        bz = self.obtain_bugzoo(snapshot)
         coverage = self.obtain_coverage(snapshot)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
+        problem = self.obtain_problem(bz, snapshot, coverage, analysis, settings)
         snippets = self.obtain_snippets(snapshot, analysis)
-        transformations = self.obtain_transformations(snapshot,
+        transformations = self.obtain_transformations(problem,
+                                                      snapshot,
                                                       coverage,
                                                       localization,
                                                       snippets,
@@ -139,7 +160,8 @@ class RepairController(ArgparseController):
                                                       settings)
 
         logger.info("ready to perform repair")
-        searcher = start_repair.search(snapshot,
+        searcher = start_repair.search(problem,
+                                       snapshot,
                                        localization=localization,
                                        coverage=coverage,
                                        analysis=analysis,
@@ -172,7 +194,7 @@ class RepairController(ArgparseController):
 
         # write patches to disk
         for (num, patch) in enumerate(patches):
-            diff = str(patch)
+            diff = str(patch.to_diff(problem))
             fn_patch = "{}.diff".format(num)
             fn_patch = os.path.join(dir_patches, fn_patch)
             logger.debug("writing patch to %s", fn_patch)
@@ -211,6 +233,7 @@ class RepairController(ArgparseController):
         return localization
 
     def obtain_transformations(self,
+                               problem,         # type: Problem
                                snapshot,        # type: Snapshot
                                coverage,        # type: TestSuiteCoverage
                                localization,    # type: Localization
@@ -222,7 +245,8 @@ class RepairController(ArgparseController):
         if not fn:
             logger.info("no transformation database provided")
             logger.info("generating transformation database")
-            transformations = start_repair.transformations(snapshot,
+            transformations = start_repair.transformations(problem,
+                                                           snapshot,
                                                            coverage,
                                                            localization,
                                                            snippets,
