@@ -121,6 +121,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT,
                    (['--output'],
                      {'help': 'output patch directory',
                       'default': 'patches',
@@ -319,6 +320,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT,
                    (['--output'],
                      {'help': 'output file for snippet database',
                       'default': 'snippets.json',
@@ -358,6 +360,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT,
                    (['--output'],
                      {'help': 'output file for transformation database',
                       'default': 'transformations.json',
@@ -405,6 +408,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT,
                    (['--output'],
                      {'help': 'output file for static analysis',
                       'default': 'analysis.json',
@@ -433,6 +437,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT,
                    (['--output'],
                      {'help': 'output file to write results to.',
                       'default': 'localization.json',
@@ -461,6 +466,7 @@ class RepairController(ArgparseController):
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
                    OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT,
                    (['--output'],
                      {'help': 'output file to coverage report',
                       'default': 'coverage.json',
@@ -492,7 +498,8 @@ class RepairController(ArgparseController):
                    OPT_LIVENESS,
                    OPT_SPEEDUP,
                    OPT_CHECK_WAYPOINTS,
-                   OPT_WORKAROUND])
+                   OPT_WORKAROUND,
+                   OPT_DOCKER_CLIENT])
     def validate(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file

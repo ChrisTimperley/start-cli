@@ -79,6 +79,11 @@ OPT_LIVENESS = \
       'dest': 'timeout_liveness',
       'default': 1})
 
+OPT_DOCKER_CLIENT = \
+    (['--docker-client'],
+     {'help': 'the version of the Docker Client API that should be used to communicate with the Docker server.',
+      'type': str})
+
 OPT_CHECK_SCOPE = \
     (['--check-scope'],
      {'help': 'prevents transformations with out-of-scope variables.',
