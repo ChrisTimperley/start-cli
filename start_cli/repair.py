@@ -48,8 +48,7 @@ class RepairController(ArgparseController):
 
     def obtain_bugzoo(self, snapshot):
         # type: (Snapshot) -> BugZoo
-        # dkr = _docker_client()
-        bz = BugZoo()  # FIXME pass client version
+        bz = BugZoo(docker_client_api_version=self.app.pargs.docker_client)
         bz.bugs.add(snapshot)
         return bz
 
