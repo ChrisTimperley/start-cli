@@ -366,7 +366,8 @@ class RepairController(ArgparseController):
         snippets = self.obtain_snippets(snapshot, analysis)
 
         logger.info("precomputing transformations for scenario")
-        transformations = start_repair.transformations(snapshot,
+        transformations = start_repair.transformations(problem,
+                                                       snapshot,
                                                        coverage,
                                                        localization,
                                                        snippets,
