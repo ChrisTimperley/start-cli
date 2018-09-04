@@ -360,6 +360,7 @@ class RepairController(ArgparseController):
 
         settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
+        bz = self.obtain_bugzoo(snapshot)
         coverage = self.obtain_coverage(snapshot)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
