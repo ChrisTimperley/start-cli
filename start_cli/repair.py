@@ -60,6 +60,106 @@ class RepairController(ArgparseController):
                        analysis=analysis,
                        settings=settings)
 
+    def obtain_settings(self):
+        # type: () -> RepairSettings
+        return RepairSettings(
+            use_scope_checking=self.app.pargs.check_scope,
+            use_syntax_scope_checking=self.app.pargs.check_syntax_scope,
+            only_insert_executed_code=self.app.pargs.only_insert_executed,
+            ignore_untyped_returns=self.app.pargs.ignore_untyped_returns,
+            ignore_equivalent_appends=self.app.pargs.ignore_equiv_prepends,
+            ignore_dead_code=self.app.pargs.ignore_dead_code)
+
+    def obtain_localization(self, coverage):
+        # type: (TestSuiteCoverage) -> Localization
+        fn = self.app.pargs.localization
+        if not fn:
+            logger.info("no localization file provided")
+            logger.info("computing fault localization")
+            localization = start_repair.localize(coverage)
+            logger.info("computed fault localization:\n%s",
+                        indent(repr(localization), 2))
+        else:
+            logger.info("loading localization from file: %s", fn)
+            localization = Localization.from_file(fn)
+            logger.info("loaded localization from file:\n%s",
+                        indent(repr(localization), 2))
+        return localization
+
+    def obtain_transformations(self,
+                               problem,         # type: Problem
+                               snapshot,        # type: Snapshot
+                               coverage,        # type: TestSuiteCoverage
+                               localization,    # type: Localization
+                               snippets,        # type: SnippetDatabase
+                               analysis,        # type: Analysis
+                               settings         # type: RepairSettings
+                               ):               # type: (...) -> List[Transformation]
+        fn = self.app.pargs.transformations
+        if not fn:
+            logger.info("no transformation database provided")
+            logger.info("generating transformation database")
+            transformations = start_repair.transformations(problem,
+                                                           snapshot,
+                                                           coverage,
+                                                           localization,
+                                                           snippets,
+                                                           analysis,
+                                                           settings)
+            logger.info("generated transformation database")
+        else:
+            logger.info("loading transformation database: %s", fn)
+            # FIXME implement transformation database
+            with open(fn, 'r') as f:
+                jsn = json.load(f)
+            transformations = [Transformation.from_dict(d) for d in jsn]
+            logger.info("loaded transformation database (%d transformations)",
+                        len(transformations))
+        return transformations
+
+    def obtain_coverage(self, snapshot, bz):
+        # type: (Snapshot, BugZoo) -> TestSuiteCoverage
+        fn = self.app.pargs.coverage
+        if not fn:
+            logger.info("no line coverage report provided")
+            logger.info("generating line coverage report")
+            coverage = compute_coverage(snapshot, bz)
+            logger.info("generated line coverage report")
+        else:
+            logger.info("loading line coverage report: %s", fn)
+            coverage = TestSuiteCoverage.from_file(fn)
+            logger.info("loaded line coverage report")
+        return coverage
+
+    def obtain_snippets(self, snapshot, analysis):
+        # type: (Snapshot, Analysis) -> SnippetDatabase
+        fn = self.app.pargs.snippets
+        if not fn:
+            logger.info("no snippet database provided")
+            logger.info("generating snippet database")
+            snippets = SnippetDatabase.from_statements(analysis.statements)
+            logger.info("generated snippet database: %d snippets",
+                        len(snippets))
+        else:
+            logger.info("loading provided snippet database: %s", fn)
+            snippets = SnippetDatabase.from_file(fn)
+            logger.info("loaded snippet database: %d snippets", len(snippets))
+        return snippets
+
+    def obtain_analysis(self, snapshot, files):
+        # type: (Snapshot, List[str]) -> Analysis
+        fn = self.app.pargs.analysis
+        if not fn:
+            logger.info("no static analysis provided")
+            logger.info("performing static analysis")
+            analysis = start_repair.analyze(snapshot, files)
+            logger.info("performed static analysis")
+        else:
+            logger.info("loading provided static analysis: %s", fn)
+            analysis = Analysis.from_file(fn, snapshot)
+            logger.info("loaded static analysis")
+        return analysis
+
     def obtain_snapshot(self):
         # type: () -> None
         return self.__build_snapshot(self.app.pargs.file,
@@ -194,106 +294,6 @@ class RepairController(ArgparseController):
                 logger.exception("failed to write patch: %s", fn_patch)
                 raise
             logger.debug("wrote patch to %s", fn_patch)
-
-    def obtain_settings(self):
-        # type: () -> RepairSettings
-        return RepairSettings(
-            use_scope_checking=self.app.pargs.check_scope,
-            use_syntax_scope_checking=self.app.pargs.check_syntax_scope,
-            only_insert_executed_code=self.app.pargs.only_insert_executed,
-            ignore_untyped_returns=self.app.pargs.ignore_untyped_returns,
-            ignore_equivalent_appends=self.app.pargs.ignore_equiv_prepends,
-            ignore_dead_code=self.app.pargs.ignore_dead_code)
-
-    def obtain_localization(self, coverage):
-        # type: (TestSuiteCoverage) -> Localization
-        fn = self.app.pargs.localization
-        if not fn:
-            logger.info("no localization file provided")
-            logger.info("computing fault localization")
-            localization = start_repair.localize(coverage)
-            logger.info("computed fault localization:\n%s",
-                        indent(repr(localization), 2))
-        else:
-            logger.info("loading localization from file: %s", fn)
-            localization = Localization.from_file(fn)
-            logger.info("loaded localization from file:\n%s",
-                        indent(repr(localization), 2))
-        return localization
-
-    def obtain_transformations(self,
-                               problem,         # type: Problem
-                               snapshot,        # type: Snapshot
-                               coverage,        # type: TestSuiteCoverage
-                               localization,    # type: Localization
-                               snippets,        # type: SnippetDatabase
-                               analysis,        # type: Analysis
-                               settings         # type: RepairSettings
-                               ):               # type: (...) -> List[Transformation]
-        fn = self.app.pargs.transformations
-        if not fn:
-            logger.info("no transformation database provided")
-            logger.info("generating transformation database")
-            transformations = start_repair.transformations(problem,
-                                                           snapshot,
-                                                           coverage,
-                                                           localization,
-                                                           snippets,
-                                                           analysis,
-                                                           settings)
-            logger.info("generated transformation database")
-        else:
-            logger.info("loading transformation database: %s", fn)
-            # FIXME implement transformation database
-            with open(fn, 'r') as f:
-                jsn = json.load(f)
-            transformations = [Transformation.from_dict(d) for d in jsn]
-            logger.info("loaded transformation database (%d transformations)",
-                        len(transformations))
-        return transformations
-
-    def obtain_coverage(self, snapshot, bz):
-        # type: (Snapshot, BugZoo) -> TestSuiteCoverage
-        fn = self.app.pargs.coverage
-        if not fn:
-            logger.info("no line coverage report provided")
-            logger.info("generating line coverage report")
-            coverage = compute_coverage(snapshot, bz)
-            logger.info("generated line coverage report")
-        else:
-            logger.info("loading line coverage report: %s", fn)
-            coverage = TestSuiteCoverage.from_file(fn)
-            logger.info("loaded line coverage report")
-        return coverage
-
-    def obtain_snippets(self, snapshot, analysis):
-        # type: (Snapshot, Analysis) -> SnippetDatabase
-        fn = self.app.pargs.snippets
-        if not fn:
-            logger.info("no snippet database provided")
-            logger.info("generating snippet database")
-            snippets = SnippetDatabase.from_statements(analysis.statements)
-            logger.info("generated snippet database: %d snippets",
-                        len(snippets))
-        else:
-            logger.info("loading provided snippet database: %s", fn)
-            snippets = SnippetDatabase.from_file(fn)
-            logger.info("loaded snippet database: %d snippets", len(snippets))
-        return snippets
-
-    def obtain_analysis(self, snapshot, files):
-        # type: (Snapshot, List[str]) -> Analysis
-        fn = self.app.pargs.analysis
-        if not fn:
-            logger.info("no static analysis provided")
-            logger.info("performing static analysis")
-            analysis = start_repair.analyze(snapshot, files)
-            logger.info("performed static analysis")
-        else:
-            logger.info("loading provided static analysis: %s", fn)
-            analysis = Analysis.from_file(fn, snapshot)
-            logger.info("loaded static analysis")
-        return analysis
 
     @expose(
         help='builds the snippet database for a given scenario.',
