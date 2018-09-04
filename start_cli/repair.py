@@ -135,7 +135,7 @@ class RepairController(ArgparseController):
         settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
         bz = self.obtain_bugzoo(snapshot)
-        coverage = self.obtain_coverage(snapshot)
+        coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
         problem = self.obtain_problem(bz, snapshot, coverage, analysis, settings)
@@ -252,13 +252,13 @@ class RepairController(ArgparseController):
                         len(transformations))
         return transformations
 
-    def obtain_coverage(self, snapshot):
-        # type: (Snapshot) -> TestSuiteCoverage
+    def obtain_coverage(self, snapshot, bz):
+        # type: (Snapshot, BugZoo) -> TestSuiteCoverage
         fn = self.app.pargs.coverage
         if not fn:
             logger.info("no line coverage report provided")
             logger.info("generating line coverage report")
-            coverage = compute_coverage(snapshot)
+            coverage = compute_coverage(snapshot, bz)
             logger.info("generated line coverage report")
         else:
             logger.info("loading line coverage report: %s", fn)
@@ -319,7 +319,8 @@ class RepairController(ArgparseController):
         fn_out = self.app.pargs.output
 
         snapshot = self.obtain_snapshot()
-        coverage = self.obtain_coverage(snapshot)
+        bz = self.obtain_bugzoo(snapshot)
+        coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
 
@@ -361,7 +362,7 @@ class RepairController(ArgparseController):
         settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
         bz = self.obtain_bugzoo(snapshot)
-        coverage = self.obtain_coverage(snapshot)
+        coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
         snippets = self.obtain_snippets(snapshot, analysis)
@@ -412,7 +413,8 @@ class RepairController(ArgparseController):
         logger.info("performing static analyis of scenario")
 
         snapshot = self.obtain_snapshot()
-        coverage = self.obtain_coverage(snapshot)
+        bz = self.obtain_bugzoo(snapshot)
+        coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = start_repair.analyze(snapshot, localization.files)
         analysis.to_file(fn_out, snapshot)
@@ -439,7 +441,8 @@ class RepairController(ArgparseController):
         fn_coverage = self.app.pargs.file
         fn_out = self.app.pargs.output
         snapshot = self.obtain_snapshot()
-        coverage = self.obtain_coverage(snapshot)
+        bz = self.obtain_bugzoo(snapshot)
+        coverage = self.obtain_coverage(snapshot, bz)
 
         logger.info("computing fault localization")
         localization = start_repair.localize(coverage)
@@ -470,7 +473,8 @@ class RepairController(ArgparseController):
 
         logger.info("performing fault localization for scenario")
         snapshot = self.obtain_snapshot()
-        cov = compute_coverage(snapshot)
+        bz = self.obtain_bugzoo(snapshot)
+        cov = compute_coverage(snapshot, bz)
 
         logger.info("saving coverage to disk: %s", fn_out)
         jsn = cov.to_dict()
