@@ -52,13 +52,14 @@ class RepairController(ArgparseController):
         bz.bugs.add(snapshot)
         return bz
 
-    def obtain_problem(self, bz, snapshot, coverage, analysis=None, settings=None):
+    def obtain_problem(self, bz, snapshot, coverage, localization, analysis=None, settings=None):
         # type: (BugZoo, Snapshot) -> Problem
         return Problem(bz,
                        snapshot,
                        coverage,
                        analysis=analysis,
-                       settings=settings)
+                       settings=settings,
+                       restrict_to_files=localization.files)
 
     def obtain_settings(self):
         # type: () -> RepairSettings
@@ -238,7 +239,7 @@ class RepairController(ArgparseController):
         coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
-        problem = self.obtain_problem(bz, snapshot, coverage, analysis, settings)
+        problem = self.obtain_problem(bz, snapshot, coverage, localization, analysis, settings)
         snippets = self.obtain_snippets(snapshot, analysis)
         transformations = self.obtain_transformations(problem,
                                                       snapshot,
@@ -366,7 +367,7 @@ class RepairController(ArgparseController):
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
         snippets = self.obtain_snippets(snapshot, analysis)
-        problem = self.obtain_problem(bz, snapshot, coverage, analysis, settings)
+        problem = self.obtain_problem(bz, snapshot, coverage, localization, analysis, settings)
 
         logger.info("precomputing transformations for scenario")
         transformations = start_repair.transformations(problem,
