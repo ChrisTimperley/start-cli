@@ -70,6 +70,7 @@ class RepairController(ArgparseController):
             only_insert_executed_code=self.app.pargs.only_insert_executed,
             ignore_untyped_returns=self.app.pargs.ignore_untyped_returns,
             ignore_equivalent_appends=self.app.pargs.ignore_equiv_prepends,
+            ignore_string_equivalent_snippets=self.app.pargs.ignore_string_equiv_snippets,
             ignore_dead_code=self.app.pargs.ignore_dead_code)
 
     def obtain_localization(self, coverage):
