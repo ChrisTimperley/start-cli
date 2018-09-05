@@ -134,13 +134,15 @@ class RepairController(ArgparseController):
             logger.info("loaded line coverage report")
         return coverage
 
-    def obtain_snippets(self, snapshot, analysis):
-        # type: (Snapshot, Analysis) -> SnippetDatabase
+    def obtain_snippets(self, snapshot, analysis, settings):
+        # type: (Snapshot, Analysis, RepairSettings) -> SnippetDatabase
         fn = self.app.pargs.snippets
         if not fn:
             logger.info("no snippet database provided")
             logger.info("generating snippet database")
-            snippets = SnippetDatabase.from_statements(analysis.statements)
+            snippets = SnippetDatabase.from_statements(
+                analysis.statements,
+                use_canonical_form=settings.ignore_string_equivalent_snippets)
             logger.info("generated snippet database: %d snippets",
                         len(snippets))
         else:
@@ -242,7 +244,7 @@ class RepairController(ArgparseController):
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
         problem = self.obtain_problem(bz, snapshot, coverage, localization, analysis, settings)
-        snippets = self.obtain_snippets(snapshot, analysis)
+        snippets = self.obtain_snippets(snapshot, analysis, settings)
         transformations = self.obtain_transformations(problem,
                                                       snapshot,
                                                       coverage,
@@ -327,13 +329,16 @@ class RepairController(ArgparseController):
         fn_out = self.app.pargs.output
 
         snapshot = self.obtain_snapshot()
+        settings = self.obtain_settings()
         bz = self.obtain_bugzoo(snapshot)
         coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
 
         logger.info("building snippet database for a given scenario")
-        snippets = SnippetDatabase.from_statements(analysis.statements)
+        snippets = SnippetDatabase.from_statements(
+                analysis.statements,
+                use_canonical_form=settings.ignore_string_equivalent_snippets)
         logger.info("built snippet database for a given scenario")
 
         logger.info("saving snippet database to file: %s", fn_out)
@@ -373,7 +378,7 @@ class RepairController(ArgparseController):
         coverage = self.obtain_coverage(snapshot, bz)
         localization = self.obtain_localization(coverage)
         analysis = self.obtain_analysis(snapshot, localization.files)
-        snippets = self.obtain_snippets(snapshot, analysis)
+        snippets = self.obtain_snippets(snapshot, analysis, settings)
         problem = self.obtain_problem(bz, snapshot, coverage, localization, analysis, settings)
 
         logger.info("precomputing transformations for scenario")
