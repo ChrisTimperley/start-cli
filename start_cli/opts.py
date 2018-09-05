@@ -84,6 +84,11 @@ OPT_DOCKER_CLIENT = \
      {'help': 'the version of the Docker Client API that should be used to communicate with the Docker server.',
       'type': str})
 
+OPT_SEED = \
+    (['--seed'],
+     {'help': 'specifies a seed for the random number generator.',
+      'type': int,
+      'default': 0})
 OPT_CHECK_SCOPE = \
     (['--check-scope'],
      {'help': 'prevents transformations with out-of-scope variables.',
@@ -116,6 +121,7 @@ OPT_ONLY_INSERT_EXECUTED = \
       'action': 'store_true'})
 
 OPTS_REPAIR = [
+    OPT_SEED,
     OPT_CHECK_SCOPE,
     OPT_CHECK_SYNTAX,
     OPT_IGNORE_DEAD_CODE,
