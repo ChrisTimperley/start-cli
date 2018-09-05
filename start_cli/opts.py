@@ -114,6 +114,11 @@ OPT_IGNORE_EQUIV_PREPENDS = \
      {'help': 'prevents equivalent prepend transformations.',
       'dest': 'ignore_equiv_prepends',
       'action': 'store_true'})
+OPT_IGNORE_STRING_EQUIV_SNIPPETS = \
+    (['--ignore-string-equiv-snippets'],
+     {'help': 'ignores duplicate string-equivalent snippets.',
+      'dest': 'ignore_string_equiv_snippets',
+      'action': 'store_true'})
 OPT_ONLY_INSERT_EXECUTED = \
     (['--only-insert-executed'],
      {'help': 'restricts transformations to those that involve executed code.',
@@ -126,6 +131,7 @@ OPTS_REPAIR = [
     OPT_CHECK_SYNTAX,
     OPT_IGNORE_DEAD_CODE,
     OPT_IGNORE_UNTYPED_RETURNS,
+    OPT_IGNORE_STRING_EQUIV_SNIPPETS,
     OPT_IGNORE_EQUIV_PREPENDS,
-    OPT_ONLY_INSERT_EXECUTED
+    OPT_ONLY_INSERT_EXECUTED,
 ]
