@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import docker
+import random
 
 import start_repair
 from start_repair import compute_coverage, Snapshot
@@ -248,6 +249,11 @@ class RepairController(ArgparseController):
                                                       snippets,
                                                       analysis,
                                                       settings)
+
+        seed = self.app.pargs.seed
+        logger.debug("seeding RNG with seed: %d", seed)
+        random.seed(seed)
+        logger.debug("seeded RNG")
 
         logger.info("ready to perform repair")
         searcher = start_repair.search(problem,
