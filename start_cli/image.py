@@ -24,16 +24,10 @@ class ImageController(ArgparseController):
 
     @expose(
         help='builds the Docker image for a given scenario',
-        arguments=[OPT_FILE,
-                   (['--output'],
-                    {'help': 'location of the file (or directory) to which the results should be written.',
-                     'default': 'image.tar.gz',
-                     'type': str})
-                   ])
+        arguments=[OPT_FILE])
     def build(self):
         # type: () -> None
         fn_scenario = self.app.pargs.file
-        fn_archive = self.app.pargs.output
 
         logger.info("loading scenario from file [%s]", fn_scenario)
         scenario = Scenario.from_file(fn_scenario)
@@ -44,17 +38,6 @@ class ImageController(ArgparseController):
         build_scenario_image(scenario)
         logger.info("built image [%s] for scenario [%s]",
                     name_image, scenario.name)
-
-        logger.info("saving image [%s] to disk [%s]",
-                    name_image, fn_archive)
-        try:
-            save_to_archive(scenario, fn_archive)
-        except Exception:
-            logger.exception("failed to save image [%s] to disk [%s]",
-                             name_image, fn_archive)
-            raise
-        logger.info("saved image [%s] to disk [%s]",
-                    name_image, fn_archive)
 
     @expose(
         help='installs the Docker image for a scenario from an archive',
