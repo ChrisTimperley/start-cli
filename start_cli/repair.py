@@ -323,7 +323,7 @@ class RepairController(ArgparseController):
                      {'help': 'output file for snippet database',
                       'default': 'snippets.json',
                       'type': str})
-                   ])
+                   ] + OPTS_REPAIR)
     def snippets(self):
         # type: () -> None
         fn_out = self.app.pargs.output
