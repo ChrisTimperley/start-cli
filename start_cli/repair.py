@@ -47,6 +47,13 @@ class RepairController(ArgparseController):
         # type: () -> None
         self.app.args.print_help()
 
+    def seed_rng(self):
+        # type: () -> None
+        seed = self.app.pargs.seed
+        logger.debug("seeding RNG with seed: %d", seed)
+        random.seed(seed)
+        logger.debug("seeded RNG")
+
     def obtain_bugzoo(self, snapshot):
         # type: (Snapshot) -> BugZoo
         bz = BugZoo(docker_client_api_version=self.app.pargs.docker_client)
@@ -234,6 +241,8 @@ class RepairController(ArgparseController):
             raise
         logger.debug("ensured patch directory exists")
 
+        self.seed_rng()
+
         candidate_limit = self.app.pargs.limit_candidates
         time_limit_mins = self.app.pargs.timeout_repair
         threads = self.app.pargs.threads
@@ -253,10 +262,6 @@ class RepairController(ArgparseController):
                                                       analysis,
                                                       settings)
 
-        seed = self.app.pargs.seed
-        logger.debug("seeding RNG with seed: %d", seed)
-        random.seed(seed)
-        logger.debug("seeded RNG")
 
         logger.info("ready to perform repair")
         searcher = start_repair.search(problem,
@@ -328,6 +333,7 @@ class RepairController(ArgparseController):
         # type: () -> None
         fn_out = self.app.pargs.output
 
+        self.seed_rng()
         snapshot = self.obtain_snapshot()
         settings = self.obtain_settings()
         bz = self.obtain_bugzoo(snapshot)
@@ -372,6 +378,7 @@ class RepairController(ArgparseController):
         # type: () -> None
         fn_out = self.app.pargs.output
 
+        self.seed_rng()
         settings = self.obtain_settings()
         snapshot = self.obtain_snapshot()
         bz = self.obtain_bugzoo(snapshot)
