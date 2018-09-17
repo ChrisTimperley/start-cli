@@ -89,6 +89,11 @@ OPT_SEED = \
      {'help': 'specifies a seed for the random number generator.',
       'type': int,
       'default': 0})
+OPT_NO_TERMINATE_EARLY = \
+    (['--no-terminate-early'],
+     {'help': 'the search will produce as many patches as possible within the allotted time window.',
+      'dest': 'no_terminate_early',
+      'action': 'store_true'})
 OPT_CHECK_SCOPE = \
     (['--check-scope'],
      {'help': 'prevents transformations with out-of-scope variables.',
@@ -126,6 +131,7 @@ OPT_ONLY_INSERT_EXECUTED = \
       'action': 'store_true'})
 
 OPTS_REPAIR = [
+    OPT_NO_TERMINATE_EARLY,
     OPT_SEED,
     OPT_CHECK_SCOPE,
     OPT_CHECK_SYNTAX,

@@ -274,12 +274,18 @@ class RepairController(ArgparseController):
                                        candidate_limit=candidate_limit,
                                        time_limit_mins=time_limit_mins)
 
-        # FIXME obtain desired number of patches
         logger.info("beginning search process")
         patches = []  # type: List[Candidate]
-        try:
-            patches.append(next(searcher))
-        except StopIteration:
+        if self.app.pargs.no_terminate_early:
+            logger.info("search will attempt to find as many patches as possible")
+            patches = list(searcher)
+        else:
+            logger.info("search will terminate on discovery of first plausible patch")
+            try:
+                patches.append(next(searcher))
+            except StopIteration:
+                pass
+        if not patches:
             logger.info("failed to find a patch")
 
         # report stats
