@@ -105,6 +105,7 @@ class RepairController(ArgparseController):
                                analysis,        # type: Analysis
                                settings         # type: RepairSettings
                                ):               # type: (...) -> List[Transformation]
+        ordered = self.app.pargs.ordered
         fn = self.app.pargs.transformations
         if not fn:
             logger.info("no transformation database provided")
@@ -115,7 +116,8 @@ class RepairController(ArgparseController):
                                                            localization,
                                                            snippets,
                                                            analysis,
-                                                           settings)
+                                                           settings,
+                                                           ordered=ordered)
             logger.info("generated transformation database")
         else:
             logger.info("loading transformation database: %s", fn)
@@ -383,6 +385,7 @@ class RepairController(ArgparseController):
     def transformations(self):
         # type: () -> None
         fn_out = self.app.pargs.output
+        ordered = self.app.pargs.ordered
 
         self.seed_rng()
         settings = self.obtain_settings()
@@ -401,7 +404,8 @@ class RepairController(ArgparseController):
                                                        localization,
                                                        snippets,
                                                        analysis,
-                                                       settings)
+                                                       settings,
+                                                       ordered=ordered)
         logger.info("finished precomputing transformations")
 
         logger.info("writing precomputed transformations to disk: %s", fn_out)
