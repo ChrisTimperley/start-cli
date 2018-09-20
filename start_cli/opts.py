@@ -129,6 +129,11 @@ OPT_ONLY_INSERT_EXECUTED = \
      {'help': 'restricts transformations to those that involve executed code.',
       'dest': 'only_insert_executed',
       'action': 'store_true'})
+OPT_NO_ORDERING = \
+    (['--no-ordering'],
+     {'help': 'disables ordering of transformations',
+      'dest': 'ordered',
+      'action': 'store_false'})
 
 OPTS_REPAIR = [
     OPT_NO_TERMINATE_EARLY,
@@ -140,4 +145,5 @@ OPTS_REPAIR = [
     OPT_IGNORE_STRING_EQUIV_SNIPPETS,
     OPT_IGNORE_EQUIV_PREPENDS,
     OPT_ONLY_INSERT_EXECUTED,
+    OPT_NO_ORDERING
 ]
