@@ -75,6 +75,7 @@ class RepairController(ArgparseController):
             use_scope_checking=self.app.pargs.check_scope,
             use_syntax_scope_checking=self.app.pargs.check_syntax_scope,
             only_insert_executed_code=self.app.pargs.only_insert_executed,
+            ignore_decls=self.app.pargs.ignore_decls,
             ignore_untyped_returns=self.app.pargs.ignore_untyped_returns,
             ignore_equivalent_appends=self.app.pargs.ignore_equiv_prepends,
             ignore_string_equivalent_snippets=self.app.pargs.ignore_string_equiv_snippets,

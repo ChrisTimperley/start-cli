@@ -124,6 +124,11 @@ OPT_IGNORE_STRING_EQUIV_SNIPPETS = \
      {'help': 'ignores duplicate string-equivalent snippets.',
       'dest': 'ignore_string_equiv_snippets',
       'action': 'store_true'})
+OPT_IGNORE_DECLS = \
+    (['--ignore-decls'],
+     {'help': 'prevents declrations from being transformed or inserted.',
+      'dest': 'ignore_decls',
+      'action': 'store_true'})
 OPT_ONLY_INSERT_EXECUTED = \
     (['--only-insert-executed'],
      {'help': 'restricts transformations to those that involve executed code.',
@@ -144,6 +149,7 @@ OPTS_REPAIR = [
     OPT_IGNORE_UNTYPED_RETURNS,
     OPT_IGNORE_STRING_EQUIV_SNIPPETS,
     OPT_IGNORE_EQUIV_PREPENDS,
+    OPT_IGNORE_DECLS,
     OPT_ONLY_INSERT_EXECUTED,
     OPT_NO_ORDERING
 ]
